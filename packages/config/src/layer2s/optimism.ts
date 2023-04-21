@@ -1,5 +1,6 @@
 import { EthereumAddress, ProjectId, UnixTime } from '@l2beat/shared'
 
+import { HARDCODED } from '../discovery/hardcoded/hardcoded'
 import { ProjectDiscovery } from '../discovery/ProjectDiscovery'
 import {
   CONTRACTS,
@@ -50,32 +51,38 @@ export const optimism: Layer2 = {
     escrows: [
       {
         // old snx bridge
-        address: EthereumAddress('0x045e507925d2e05D114534D0810a1abD94aca8d6'),
+        //address: EthereumAddress('0x045e507925d2e05D114534D0810a1abD94aca8d6'),
+        address: HARDCODED.OPTIMISM.OLD_SNX_BRIDGE,
         sinceTimestamp: new UnixTime(1610668212),
         tokens: ['SNX'],
       },
       {
         // current SNX bridge escrow
-        address: EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f'),
+        //address: EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f'),
+        address: HARDCODED.OPTIMISM.CURRENT_SNX_BRIDGE,
         sinceTimestamp: new UnixTime(1620680982),
         tokens: ['SNX'],
       },
       {
         // new snx bridge
-        address: EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068'),
+        //address: EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068'),
+        address: HARDCODED.OPTIMISM.NEW_SNX_BRIDGE,
         sinceTimestamp: new UnixTime(1620680934),
         tokens: ['SNX'],
       },
       {
-        address: EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65'),
+        //address: EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65'),
+        address: HARDCODED.OPTIMISM.DAI_BRIDGE,
         sinceTimestamp: new UnixTime(1625675779),
         tokens: ['DAI'],
       },
-      {
-        address: EthereumAddress('0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1'),
+      discovery.getEscrowDetails({
+        identifier: 'L1StandardBridge',
         sinceTimestamp: new UnixTime(1624401464),
-        tokens: '*',
-      },
+        tokens: ['*'],
+        description:
+          'The standard bridge for Optimism.',
+      }),
     ],
     transactionApi: {
       type: 'rpc',
@@ -281,7 +288,7 @@ export const optimism: Layer2 = {
         name: 'L1StandardBridge',
         address: discovery.getContract('L1StandardBridge').address,
         description:
-          'Main entry point forgetContract users depositing ERC20 tokens and ETH that do not require custom gateway.',
+          'Main entry point for users depositing ERC20 tokens and ETH that do not require custom gateway.',
         upgradeability:
           discovery.getContract('L1StandardBridge').upgradeability,
       },
@@ -289,23 +296,27 @@ export const optimism: Layer2 = {
         name: 'SynthetixBridgeToOptimism',
         description:
           'Custom SNX Gateway, main entry point for users depositing SNX to L2 where "canonical" L2 SNX token managed by Synthetix will be minted. Managed by Synthetix.',
-        address: EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068'),
+        //address: EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068'),
+        address: HARDCODED.OPTIMISM.SNX_BRIDGE_TO_OPTIMISM,
       },
       {
         name: 'SynthetixBridgeEscrow',
         description: 'SNX Vault for custom SNX Gateway managed by Synthetix.',
-        address: EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f'),
+        //address: EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f'),
+        address: HARDCODED.OPTIMISM.SNX_BRIDGE_ESCROW,
       },
       {
         name: 'L1DaiGateway',
         description:
           'Custom DAI Gateway, main entry point for users depositing DAI to L2 where "canonical" L2 DAI token managed by MakerDAO will be minted. Managed by MakerDAO.',
-        address: EthereumAddress('0x10E6593CDda8c58a1d0f14C5164B376352a55f2F'),
+        //address: EthereumAddress('0x10E6593CDda8c58a1d0f14C5164B376352a55f2F'),
+        address: HARDCODED.OPTIMISM.L1_DAI_GATEWAY,
       },
       {
         name: 'L1Escrow',
         description: 'DAI Vault for custom DAI Gateway managed by MakerDAO.',
-        address: EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65'),
+        //address: EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65'),
+        address: HARDCODED.OPTIMISM.L1_DAI_ESCROW,
       },
     ],
     risks: [CONTRACTS.UPGRADE_NO_DELAY_RISK],

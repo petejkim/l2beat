@@ -1,0 +1,27 @@
+import { EthereumAddress } from '@l2beat/shared'
+
+import { ProjectPermissionedAccount } from '../../../common'
+
+const OLD_SNX_BRIDGE = EthereumAddress('0x045e507925d2e05D114534D0810a1abD94aca8d6')
+const CURRENT_SNX_BRIDGE = EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f')
+const NEW_SNX_BRIDGE = EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068')
+const DAI_BRIDGE = EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65')
+
+const SNX_BRIDGE_TO_OPTIMISM = EthereumAddress('0xCd9D4988C0AE61887B075bA77f08cbFAd2b65068')
+const SNX_BRIDGE_ESCROW = EthereumAddress('0x5Fd79D46EBA7F351fe49BFF9E87cdeA6c821eF9f')
+const L1_DAI_GATEWAY = EthereumAddress('0x10E6593CDda8c58a1d0f14C5164B376352a55f2F')
+const L1_DAI_ESCROW = EthereumAddress('0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65')
+
+
+
+export const OPTIMISM_HARDCODED = {
+  OLD_SNX_BRIDGE,
+  CURRENT_SNX_BRIDGE,
+  NEW_SNX_BRIDGE,
+  DAI_BRIDGE,
+  
+  SNX_BRIDGE_TO_OPTIMISM,
+  SNX_BRIDGE_ESCROW,
+  L1_DAI_GATEWAY,
+  L1_DAI_ESCROW,
+}

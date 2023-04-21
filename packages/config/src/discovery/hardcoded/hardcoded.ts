@@ -13,10 +13,12 @@ UNDERSTAND WHAT YOU ARE DOING BEFORE YOU UPDATE THIS FILE
 */
 
 import { ARBITRUM_HARDCODED } from './projects/arbitrumHardcoded'
+import { OPTIMISM_HARDCODED } from './projects/optimismHardcoded'
 
 // This is the entry point for hardcoding values in the config
 // only HARDCODED object should be imported in project's config
 
 export const HARDCODED = {
   ARBITRUM: ARBITRUM_HARDCODED,
+  OPTIMISM: OPTIMISM_HARDCODED,
 }
