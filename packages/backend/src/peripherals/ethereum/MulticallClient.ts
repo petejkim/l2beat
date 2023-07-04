@@ -1,4 +1,5 @@
-import { Bytes, EthereumAddress } from '@l2beat/shared-pure'
+import { Bytes, ChainId, EthereumAddress } from '@l2beat/shared-pure'
+import { assert } from 'console'
 import { utils } from 'ethers'
 
 import { EthereumClient } from './EthereumClient'
@@ -23,8 +24,24 @@ export interface MulticallResponse {
   data: Bytes
 }
 
-export class MulticallClient {
+export interface MulticallClient {
+  getChainId(): ChainId
+  multicall(
+    requests: MulticallRequest[],
+    blockNumber: number,
+  ): Promise<MulticallResponse[]>
+  multicallNamed(
+    requests: Record<string, MulticallRequest>,
+    blockNumber: number,
+  ): Promise<Record<string, MulticallResponse>>
+}
+
+export class EthereumMulticallClient implements MulticallClient {
   constructor(private readonly ethereumClient: EthereumClient) {}
+
+  getChainId() {
+    return this.ethereumClient.getChainId()
+  }
 
   async multicallNamed(
     requests: Record<string, MulticallRequest>,
@@ -43,36 +60,13 @@ export class MulticallClient {
 
   async multicall(requests: MulticallRequest[], blockNumber: number) {
     if (blockNumber < MULTICALL_V1_BLOCK) {
-      return this.executeIndividual(requests, blockNumber)
+      return executeIndividual(this.ethereumClient, requests, blockNumber)
     }
     const batches = toBatches(requests, MULTICALL_BATCH_SIZE)
     const batchedResults = await Promise.all(
       batches.map((batch) => this.executeBatch(batch, blockNumber)),
     )
     return batchedResults.flat()
-  }
-
-  private async executeIndividual(
-    requests: MulticallRequest[],
-    blockNumber: number,
-  ): Promise<MulticallResponse[]> {
-    const results = await Promise.all(
-      requests.map((request) =>
-        this.ethereumClient.call(
-          {
-            to: request.address,
-            data: request.data,
-          },
-          blockNumber,
-        ),
-      ),
-    )
-    return results.map(
-      (result): MulticallResponse => ({
-        success: result.length !== 0,
-        data: result,
-      }),
-    )
   }
 
   private async executeBatch(
@@ -101,6 +95,86 @@ export class MulticallClient {
       return decodeMulticallV2(result)
     }
   }
+}
+
+export const ARBITRUM_MULTICALL_BLOCK = 821923
+export const ARBITRUM_MULTICALL_ADDRESS = EthereumAddress(
+  '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2',
+)
+
+export class ArbitrumMulticallClient {
+  constructor(private readonly ethereumClient: EthereumClient) {
+    assert(ethereumClient.getChainId() === ChainId.ARBITRUM)
+  }
+
+  getChainId() {
+    return this.ethereumClient.getChainId()
+  }
+
+  async multicallNamed(
+    requests: Record<string, MulticallRequest>,
+    blockNumber: number,
+  ): Promise<Record<string, MulticallResponse>> {
+    const entries = Object.entries(requests)
+    const results = await this.multicall(
+      entries.map((x) => x[1]),
+      blockNumber,
+    )
+    const resultEntries = results.map(
+      (result, i) => [entries[i][0], result] as const,
+    )
+    return Object.fromEntries(resultEntries)
+  }
+
+  async multicall(requests: MulticallRequest[], blockNumber: number) {
+    if (blockNumber < ARBITRUM_MULTICALL_BLOCK) {
+      return executeIndividual(this.ethereumClient, requests, blockNumber)
+    }
+    const batches = toBatches(requests, MULTICALL_BATCH_SIZE)
+    const batchedResults = await Promise.all(
+      batches.map((batch) => this.executeBatch(batch, blockNumber)),
+    )
+    return batchedResults.flat()
+  }
+
+  private async executeBatch(
+    requests: MulticallRequest[],
+    blockNumber: number,
+  ): Promise<MulticallResponse[]> {
+    const encoded = encodeMulticallV2(requests)
+    const result = await this.ethereumClient.call(
+      {
+        to: ARBITRUM_MULTICALL_ADDRESS,
+        data: encoded,
+      },
+      blockNumber,
+    )
+    return decodeMulticallV2(result)
+  }
+}
+
+async function executeIndividual(
+  ethereumClient: EthereumClient,
+  requests: MulticallRequest[],
+  blockNumber: number,
+): Promise<MulticallResponse[]> {
+  const results = await Promise.all(
+    requests.map((request) =>
+      ethereumClient.call(
+        {
+          to: request.address,
+          data: request.data,
+        },
+        blockNumber,
+      ),
+    ),
+  )
+  return results.map(
+    (result): MulticallResponse => ({
+      success: result.length !== 0,
+      data: result,
+    }),
+  )
 }
 
 export function toBatches<T>(items: T[], batchSize: number): T[][] {

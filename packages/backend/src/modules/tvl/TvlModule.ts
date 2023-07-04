@@ -9,6 +9,7 @@ import { createBlocksRouter } from '../../api/routers/BlocksRouter'
 import { createDydxRouter } from '../../api/routers/DydxRouter'
 import { createTvlRouter } from '../../api/routers/TvlRouter'
 import { Config } from '../../config'
+import { BalanceProvider } from '../../core/balances/BalanceProvider'
 import { BalanceUpdater } from '../../core/balances/BalanceUpdater'
 import { BlockNumberUpdater } from '../../core/BlockNumberUpdater'
 import { Clock } from '../../core/Clock'
@@ -24,7 +25,10 @@ import { ReportRepository } from '../../peripherals/database/ReportRepository'
 import { ReportStatusRepository } from '../../peripherals/database/ReportStatusRepository'
 import { Database } from '../../peripherals/database/shared/Database'
 import { EthereumClient } from '../../peripherals/ethereum/EthereumClient'
-import { MulticallClient } from '../../peripherals/ethereum/MulticallClient'
+import {
+  ArbitrumMulticallClient,
+  EthereumMulticallClient,
+} from '../../peripherals/ethereum/MulticallClient'
 import { EtherscanClient } from '../../peripherals/etherscan'
 import { ApplicationModule } from '../ApplicationModule'
 
@@ -59,8 +63,22 @@ export function createTvlModule(
     'mainnet',
     config.tvl.alchemyApiKey,
   )
-  const ethereumClient = new EthereumClient(ethereumProvider, logger)
-  const multicall = new MulticallClient(ethereumClient)
+  const arbitrumProvider = new providers.AlchemyProvider(
+    'arbitrum',
+    config.tvl.alchemyApiKey,
+  )
+  const ethereumClient = new EthereumClient(
+    ethereumProvider,
+    logger,
+    ChainId.ETHEREUM,
+  )
+  const arbitrumClient = new EthereumClient(
+    arbitrumProvider,
+    logger,
+    ChainId.ARBITRUM,
+  )
+  const multicall = new EthereumMulticallClient(ethereumClient)
+  const multicallArbitrum = new ArbitrumMulticallClient(arbitrumClient)
   const coingeckoClient = new CoingeckoClient(http, config.tvl.coingeckoApiKey)
   const coingeckoQueryService = new CoingeckoQueryService(coingeckoClient)
   const etherscanClient = new EtherscanClient(
@@ -86,9 +104,13 @@ export function createTvlModule(
     config.tokens,
     logger,
   )
-  const balanceUpdater = new BalanceUpdater(
+  const balanceProvider = new BalanceProvider(
     multicall,
     blockNumberUpdater,
+    ChainId.ETHEREUM,
+  )
+  const balanceUpdater = new BalanceUpdater(
+    balanceProvider,
     balanceRepository,
     balanceStatusRepository,
     clock,
@@ -96,6 +118,21 @@ export function createTvlModule(
     logger,
     ChainId.ETHEREUM,
   )
+  const balanceProviderArbitrum = new BalanceProvider(
+    multicallArbitrum,
+    blockNumberUpdater,
+    ChainId.ARBITRUM,
+  )
+  const balanceUpdaterArbitrum = new BalanceUpdater(
+    balanceProviderArbitrum,
+    balanceRepository,
+    balanceStatusRepository,
+    clock,
+    config.projects,
+    logger,
+    ChainId.ARBITRUM,
+  )
+  // const totalSupplyUpdater = new TotalSupplyUpdater()
   const reportUpdater = new ReportUpdater(
     priceUpdater,
     balanceUpdater,

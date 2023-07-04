@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import { Bytes, EthereumAddress, UnixTime } from '@l2beat/shared-pure'
+import { Bytes, ChainId, EthereumAddress, UnixTime } from '@l2beat/shared-pure'
 import { providers } from 'ethers'
 
 import { getBlockNumberAtOrBefore } from '../getBlockNumberAtOrBefore'
@@ -12,10 +12,15 @@ export class EthereumClient {
   constructor(
     provider: providers.Provider,
     private readonly logger: Logger,
+    private readonly chainId: ChainId,
     callsPerMinute = Infinity,
   ) {
     this.logger = this.logger.for(this)
     this.provider = new RateLimitedProvider(provider, callsPerMinute)
+  }
+
+  getChainId() {
+    return this.chainId
   }
 
   async getBlockNumber() {
