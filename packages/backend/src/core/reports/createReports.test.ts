@@ -9,6 +9,7 @@ describe(createReports.name, () => {
     const result = createReports(MOCK.PRICES, MOCK.BALANCES, MOCK.PROJECTS)
     expect(result).toEqual([
       {
+        chainId: ChainId.ETHEREUM,
         timestamp: MOCK.NOW,
         projectId: ProjectId('apex'),
         asset: AssetId.DAI,
@@ -18,6 +19,7 @@ describe(createReports.name, () => {
         ethValue: 5_000000n,
       },
       {
+        chainId: ChainId.ETHEREUM,
         timestamp: MOCK.NOW,
         projectId: ProjectId('apex'),
         asset: AssetId.ETH,
@@ -27,6 +29,7 @@ describe(createReports.name, () => {
         ethValue: 30_000000n,
       },
       {
+        chainId: ChainId.ETHEREUM,
         timestamp: MOCK.NOW,
         projectId: ProjectId('dydx'),
         asset: AssetId.ETH,

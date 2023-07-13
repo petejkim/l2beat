@@ -1,14 +1,13 @@
 import { Logger } from '@l2beat/shared'
 import { Hash256, UnixTime } from '@l2beat/shared-pure'
 
+import { AssetUpdater } from '../../modules/ApplicationModule'
 import { AggregatedReportRepository } from '../../peripherals/database/AggregatedReportRepository'
 import { AggregatedReportStatusRepository } from '../../peripherals/database/AggregatedReportStatusRepository'
-import { NMVUpdater } from '../assets/NMVUpdater'
 import { Clock } from '../Clock'
 import { TaskQueue } from '../queue/TaskQueue'
 import { aggregateReports } from './aggregateReports'
-import { CBVUpdater } from './CBVUpdater'
-import { getReportConfigHash } from './getReportConfigHash'
+import { getAggregatedConfigHash } from './getAggregatedConfigHash'
 import { ReportProject } from './ReportProject'
 
 export class AggregatedReportUpdater {
@@ -16,8 +15,7 @@ export class AggregatedReportUpdater {
   private readonly taskQueue: TaskQueue<UnixTime>
 
   constructor(
-    private readonly reportUpdater: CBVUpdater,
-    private readonly nativeAssetUpdater: NMVUpdater,
+    private readonly updaters: AssetUpdater[],
     private readonly aggregatedReportRepository: AggregatedReportRepository,
     private readonly aggregatedReportStatusRepository: AggregatedReportStatusRepository,
     private readonly clock: Clock,
@@ -25,7 +23,7 @@ export class AggregatedReportUpdater {
     private readonly logger: Logger,
   ) {
     this.logger = this.logger.for(this)
-    this.configHash = getReportConfigHash(projects)
+    this.configHash = getAggregatedConfigHash(updaters)
     this.taskQueue = new TaskQueue(
       (timestamp) => this.update(timestamp),
       this.logger.for('taskQueue'),
@@ -54,11 +52,11 @@ export class AggregatedReportUpdater {
     this.logger.debug('Update started', { timestamp: timestamp.toNumber() })
 
     const reports = (
-      await Promise.all([
-        this.reportUpdater.getReportsWhenReady(timestamp),
-        this.nativeAssetUpdater.getReportsWhenReady(timestamp),
-      ])
+      await Promise.all(
+        this.updaters.map((x) => x.getReportsWhenReady(timestamp)),
+      )
     ).flat()
+
     this.logger.debug('Reports ready')
 
     const aggregatedReports = aggregateReports(

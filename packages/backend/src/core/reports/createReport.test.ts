@@ -1,4 +1,10 @@
-import { AssetId, ProjectId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import {
+  AssetId,
+  ChainId,
+  ProjectId,
+  UnixTime,
+  ValueType,
+} from '@l2beat/shared-pure'
 import { expect } from 'earl'
 
 import { balanceToValue, createReport, getBigIntPrice } from './createReport'
@@ -22,6 +28,7 @@ describe(createReport.name, () => {
     )
 
     expect(result).toEqual({
+      chainId: ChainId.ETHEREUM,
       timestamp,
       projectId: ProjectId('arbitrum'),
       asset: AssetId.ETH,
@@ -50,6 +57,7 @@ describe(createReport.name, () => {
     )
 
     expect(result).toEqual({
+      chainId: ChainId.ETHEREUM,
       timestamp,
       projectId: ProjectId('arbitrum'),
       asset: AssetId.ETH,

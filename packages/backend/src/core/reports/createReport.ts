@@ -1,4 +1,10 @@
-import { AssetId, ProjectId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import {
+  AssetId,
+  ChainId,
+  ProjectId,
+  UnixTime,
+  ValueType,
+} from '@l2beat/shared-pure'
 
 import { ReportRecord } from '../../peripherals/database/ReportRepository'
 
@@ -31,6 +37,7 @@ export function createReport(
   )
 
   return {
+    chainId: ChainId.ETHEREUM,
     timestamp: price.timestamp,
     projectId: balance.projectId,
     asset: balance.assetId,

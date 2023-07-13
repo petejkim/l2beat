@@ -44,6 +44,14 @@ export class NMVUpdater {
     )
   }
 
+  getChainId() {
+    return ChainId.NMV
+  }
+
+  getConfigHash() {
+    return this.configHash
+  }
+
   async start() {
     const known = await this.reportStatusRepository.getByConfigHash(
       this.configHash,

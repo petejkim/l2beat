@@ -43,6 +43,14 @@ export class CBVUpdater {
     )
   }
 
+  getChainId() {
+    return ChainId.ETHEREUM
+  }
+
+  getConfigHash() {
+    return this.configHash
+  }
+
   async start() {
     const known = await this.reportStatusRepository.getByConfigHash(
       this.configHash,

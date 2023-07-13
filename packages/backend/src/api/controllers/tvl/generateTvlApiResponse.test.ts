@@ -1,5 +1,6 @@
 import {
   AssetId,
+  ChainId,
   ProjectId,
   TvlApiChart,
   TvlApiChartPoint,
@@ -129,6 +130,7 @@ describe(generateTvlApiResponse.name, () => {
       for (const assetId of assets) {
         const balanceUsd = BigInt(Math.floor(Math.random() * 20_000 + 5_000))
         result.all.push({
+          chainId: ChainId.ETHEREUM,
           asset: assetId,
           type: ValueType.CBV,
           amount: 0n, // ignored

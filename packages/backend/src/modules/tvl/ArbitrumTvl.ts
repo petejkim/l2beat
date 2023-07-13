@@ -2,18 +2,21 @@ import { ArbiscanClient, HttpClient, Logger } from '@l2beat/shared'
 import { ChainId } from '@l2beat/shared-pure'
 
 import { Config } from '../../config'
+import { NMVUpdater } from '../../core/assets/NMVUpdater'
 import { BlockNumberUpdater } from '../../core/BlockNumberUpdater'
 import { Clock } from '../../core/Clock'
-import { ApplicationModule } from '../ApplicationModule'
+import { PriceUpdater } from '../../core/PriceUpdater'
+import { TvlSubmodule } from '../ApplicationModule'
 import { TvlDatabase } from './types'
 
 export function createArbitrumTvlSubmodule(
   db: TvlDatabase,
+  priceUpdater: PriceUpdater,
   config: Config,
   logger: Logger,
   http: HttpClient,
   clock: Clock,
-): ApplicationModule | undefined {
+): TvlSubmodule | undefined {
   if (!config.tvl.arbitrum) {
     logger.info('Arbitrum TVL module disabled')
     return
@@ -38,6 +41,14 @@ export function createArbitrumTvlSubmodule(
     ChainId.ARBITRUM,
   )
 
+  const dummyUpdater = new NMVUpdater(
+    priceUpdater,
+    db.reportRepository,
+    db.reportStatusRepository,
+    clock,
+    logger,
+  )
+
   // #endregion
 
   const start = async () => {
@@ -51,5 +62,6 @@ export function createArbitrumTvlSubmodule(
 
   return {
     start,
+    updater: dummyUpdater,
   }
 }

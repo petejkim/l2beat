@@ -1,4 +1,10 @@
-import { AssetId, ProjectId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import {
+  AssetId,
+  ChainId,
+  ProjectId,
+  UnixTime,
+  ValueType,
+} from '@l2beat/shared-pure'
 import { expect } from 'earl'
 
 import { AggregatedReportRecord } from '../../peripherals/database/AggregatedReportRepository'
@@ -71,6 +77,7 @@ describe(aggregateReports.name, () => {
     balance: bigint,
   ): ReportRecord {
     return {
+      chainId: ChainId.ETHEREUM,
       timestamp: NOW,
       projectId,
       asset: asset === 'eth' ? AssetId.ETH : AssetId.DAI,
