@@ -44,7 +44,7 @@ export function getSecondaryStyle(
 export function getCBVStyle(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-) {
+): CanvasFillStrokeStyles['fillStyle'] {
   const fillStyle = '#7E41CC'
 
   const drawCmd = (
@@ -75,13 +75,13 @@ export function getCBVStyle(
     patternCtx.stroke()
   }
 
-  return createPattern(canvas, ctx, drawCmd)
+  return createPattern(canvas, ctx, drawCmd) ?? fillStyle
 }
 
 export function getEBVStyle(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-) {
+): CanvasFillStrokeStyles['fillStyle'] {
   const fillStyle = '#FFC107'
 
   const drawCmd = (
@@ -116,14 +116,50 @@ export function getEBVStyle(
     patternCtx.stroke()
   }
 
-  return createPattern(canvas, ctx, drawCmd)
+  return createPattern(canvas, ctx, drawCmd) ?? fillStyle
 }
 
 export function getNMVStyle(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-) {
-  return '#FF46C0'
+): CanvasFillStrokeStyles['fillStyle'] {
+  const fillStyle = '#FF46C0'
+
+  const drawCmd = (
+    patternCanvas: HTMLCanvasElement,
+    patternCtx: CanvasRenderingContext2D,
+  ) => {
+    patternCtx.fillStyle = fillStyle
+    patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height)
+    patternCtx.beginPath()
+    patternCtx.strokeStyle = 'rgba(255,255,255,0.5)'
+    moveToMany(
+      [
+        { x: 0.0, y: 0.0 },
+        { x: 0.5, y: 0.0 },
+        { x: 0.5, y: 0.25 },
+        { x: 0.0, y: 0.25 },
+        { x: 0.0, y: 0.0 },
+      ],
+      patternCtx,
+      patternCanvas,
+    )
+
+    moveToMany(
+      [
+        { x: 0.5, y: 0.5 },
+        { x: 1.0, y: 0.5 },
+        { x: 1.0, y: 0.75 },
+        { x: 0.5, y: 0.75 },
+        { x: 0.5, y: 0.5 },
+      ],
+      patternCtx,
+      patternCanvas,
+    )
+    patternCtx.stroke()
+  }
+
+  return createPattern(canvas, ctx, drawCmd) ?? fillStyle
 }
 
 function createPattern(
