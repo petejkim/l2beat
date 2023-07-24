@@ -61,13 +61,11 @@ export interface TvlConfig {
 export interface EthereumTvlConfig {
   readonly alchemyApiKey: string
   readonly etherscanApiKey: string
-  readonly minBlockTimestamp: UnixTime
 }
 
 export interface ArbitrumTvlConfig {
-  readonly providerUrl: string
+  readonly alchemyApiKey: string
   readonly arbiscanApiKey: string
-  readonly minBlockTimestamp: UnixTime
 }
 
 export interface HealthConfig {
@@ -79,7 +77,6 @@ export interface ActivityConfig {
   readonly starkexApiKey: string
   readonly starkexCallsPerMinute: number
   readonly skipExplicitExclusion: boolean
-  readonly projectsExcludedFromAPI: string[]
   readonly allowedProjectIds?: string[]
   readonly projects: Record<string, Layer2TransactionApi | undefined>
 }

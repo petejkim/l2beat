@@ -15,6 +15,16 @@ export function updateInit(message: InitMessage): [State, Effect[]] {
       url: message.aggregateTvlEndpoint,
       requestId: 1,
     }
+  } else if (message.initialView === 'detailedTvl') {
+    if (!message.detailedAggregateTvlEndpoint) {
+      throw new Error('Invalid init message, missing detailed tvl endpoint!')
+    }
+
+    fetchEffect = {
+      type: 'FetchDetailedAggregateTvl',
+      url: message.detailedAggregateTvlEndpoint,
+      requestId: 1,
+    }
   } else {
     if (!message.activityEndpoint) {
       throw new Error('Invalid init message, missing activity endpoint!')
@@ -40,6 +50,7 @@ export function updateInit(message: InitMessage): [State, Effect[]] {
       },
       data: {
         aggregateTvl: undefined,
+        aggregateDetailedTvl: undefined,
         alternativeTvl: undefined,
         activity: undefined,
         tokenTvl: {},

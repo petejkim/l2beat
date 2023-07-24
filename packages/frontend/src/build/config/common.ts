@@ -13,20 +13,18 @@ export const common: Omit<Config, 'backend'> = {
     youTube: 'https://www.youtube.com/channel/UCDrl-fNXFjOoykr4lQij9BA/videos',
     medium: 'https://medium.com/l2beat',
     forum: 'https://gov.l2beat.com/',
-    multisigReport:
-      'https://drive.google.com/file/d/182ycEW8C2wk5tGd3X1tG8oQfUy9WmSJk/view',
   },
   features: {
     banner: new Date() <= GITCOIN_BETA_ROUND_END,
     gitcoinOption: false,
     hiring: true,
-    hiringBadge: false,
     activity: true,
+    // TODO(radomski): After L2 Assets are implemented we want to make this be true by default
+    l2assets: false,
     milestones: true,
     stages: true,
     buildAllProjectPages: false,
     upcomingRollups: true,
-    multisigReport: true,
   },
   layer2s,
   bridges,

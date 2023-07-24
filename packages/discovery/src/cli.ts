@@ -1,5 +1,4 @@
 import { EtherscanClient, HttpClient, Logger } from '@l2beat/shared'
-import { UnixTime } from '@l2beat/shared-pure'
 import { providers } from 'ethers'
 
 import { handleCli } from './cli/handleCli'
@@ -38,7 +37,6 @@ async function discover(config: DiscoveryCliConfig, logger: Logger) {
   const etherscanClient = new EtherscanClient(
     http,
     config.discovery.etherscanApiKey,
-    new UnixTime(0),
   )
   const configReader = new ConfigReader()
 

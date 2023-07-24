@@ -59,16 +59,15 @@ function transformBalances(
     const assetSupplies = totalSupplies.filter(
       (s) => s.assetId === assetId && s.timestamp.gte(sinceTimestamp),
     )
-
     assert(
-      assetSupplies.length <= 1,
+      assetSupplies.length === 1,
       'Expected only one supply asset, delete this if you are adding a new one',
     )
 
     const chainIdsMatch =
       assetBalances.every((b) => b.chainId === chainId) &&
       assetSupplies.every((b) => b.chainId === chainId)
-    assert(chainIdsMatch, 'ChainIds do not match for a given asset balance')
+    assert(chainIdsMatch, 'ChainIds do not match for a given asset balanace')
 
     const totalBalance = assetSupplies.reduce(
       (acc, { totalSupply }) => acc + totalSupply,

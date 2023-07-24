@@ -13,6 +13,7 @@ export const EMPTY_STATE: State = {
   },
   data: {
     aggregateTvl: undefined,
+    aggregateDetailedTvl: undefined,
     alternativeTvl: undefined,
     activity: undefined,
     tokenTvl: {},

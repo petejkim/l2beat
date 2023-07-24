@@ -39,7 +39,6 @@ export function createEthereumTvlSubmodule(
   const etherscanClient = new EtherscanClient(
     http,
     config.tvl.ethereum.etherscanApiKey,
-    config.tvl.ethereum.minBlockTimestamp,
     logger,
   )
   const ethereumBalanceProvider = new EthereumBalanceProvider(multicall)
@@ -53,7 +52,6 @@ export function createEthereumTvlSubmodule(
     clock,
     logger,
     ChainId.ETHEREUM,
-    config.tvl.ethereum.minBlockTimestamp,
   )
 
   const balanceUpdater = new BalanceUpdater(
@@ -65,7 +63,6 @@ export function createEthereumTvlSubmodule(
     config.projects,
     logger,
     ChainId.ETHEREUM,
-    config.tvl.ethereum.minBlockTimestamp,
   )
 
   const cbvUpdater = new CBVUpdater(
@@ -76,7 +73,6 @@ export function createEthereumTvlSubmodule(
     clock,
     config.projects,
     logger,
-    config.tvl.ethereum.minBlockTimestamp,
   )
 
   // #endregion

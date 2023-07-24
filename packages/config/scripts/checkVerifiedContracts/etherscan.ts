@@ -1,5 +1,5 @@
 import { EtherscanClient, HttpClient } from '@l2beat/shared'
-import { EthereumAddress, UnixTime } from '@l2beat/shared-pure'
+import { EthereumAddress } from '@l2beat/shared-pure'
 
 import { getEnv } from './utils'
 
@@ -12,9 +12,5 @@ export async function isContractVerified(
 }
 
 export function getEtherscanClient(): EtherscanClient {
-  return new EtherscanClient(
-    new HttpClient(),
-    getEnv('ETHERSCAN_API_KEY'),
-    new UnixTime(0),
-  )
+  return new EtherscanClient(new HttpClient(), getEnv('ETHERSCAN_API_KEY'))
 }

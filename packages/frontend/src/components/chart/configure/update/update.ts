@@ -35,6 +35,8 @@ export function update(state: State, message: Message): [State, Effect[]] {
       return updateMoreTokensClicked(state)
     case 'AggregateTvlLoaded':
     case 'AggregateTvlFailed':
+    case 'AggregateDetailedTvlLoaded':
+    case 'AggregateDetailedTvlFailed':
     case 'AlternativeTvlLoaded':
     case 'AlternativeTvlFailed':
     case 'TokenTvlLoaded':

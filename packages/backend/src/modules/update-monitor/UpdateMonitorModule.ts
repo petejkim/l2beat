@@ -42,7 +42,6 @@ export function createUpdateMonitorModule(
   const etherscanClient = new EtherscanClient(
     http,
     config.updateMonitor.etherscanApiKey,
-    config.clock.minBlockTimestamp,
   )
   const discoveryProvider = new DiscoveryProvider(provider, etherscanClient)
 

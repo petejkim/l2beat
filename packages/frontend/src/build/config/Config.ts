@@ -9,19 +9,17 @@ export interface Config {
     youTube: string
     medium: string
     forum: string
-    multisigReport: string
   }
   features: {
+    l2assets: boolean
     activity: boolean
     banner: boolean
     gitcoinOption: boolean
     milestones: boolean
     hiring: boolean
-    hiringBadge: boolean
     stages: boolean
     buildAllProjectPages: boolean
     upcomingRollups: boolean
-    multisigReport: boolean
   }
   backend: {
     apiUrl: string

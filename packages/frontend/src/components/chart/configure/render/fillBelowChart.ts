@@ -4,7 +4,7 @@ export function fillBelowChart(
   ctx: CanvasRenderingContext2D,
   points: { x: number; y: number }[],
   canvas: HTMLCanvasElement,
-  fillStyle: CanvasGradient,
+  fillStyle: CanvasFillStrokeStyles['fillStyle'],
   opts?: {
     fade: boolean
   },

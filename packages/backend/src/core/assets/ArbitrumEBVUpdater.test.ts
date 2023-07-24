@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import { ChainId, UnixTime, ValueType } from '@l2beat/shared-pure'
+import { ChainId, ValueType } from '@l2beat/shared-pure'
 import { expect, mockFn, mockObject } from 'earl'
 import waitForExpect from 'wait-for-expect'
 
@@ -51,7 +51,6 @@ describe(ArbitrumEBVUpdater.name, () => {
         [MOCK.PROJECT],
         MOCK.TOKENS,
         Logger.SILENT,
-        new UnixTime(0),
       )
 
       await ebvUpdater.update(MOCK.NOW.add(1, 'hours'))
@@ -88,36 +87,6 @@ describe(ArbitrumEBVUpdater.name, () => {
       )
       // ensure that the updater updated internal knownSet
       expect(reports).toEqual(MOCK.FUTURE_REPORTS)
-    })
-
-    it('skips update if timestamp < minTimestamp', async () => {
-      const priceUpdater = mockObject<PriceUpdater>({
-        getPricesWhenReady: mockFn(),
-      })
-      const balanceUpdater = mockObject<BalanceUpdater>({
-        getBalancesWhenReady: mockFn(),
-      })
-      const suppliesUpdater = mockObject<TotalSupplyUpdater>({
-        getTotalSuppliesWhenReady: mockFn(),
-      })
-      const updater = new ArbitrumEBVUpdater(
-        priceUpdater,
-        balanceUpdater,
-        suppliesUpdater,
-        mockObject<ReportRepository>(),
-        mockObject<ReportStatusRepository>(),
-        mockObject<Clock>(),
-        [MOCK.PROJECT],
-        MOCK.TOKENS,
-        Logger.SILENT,
-        new UnixTime(1000),
-      )
-
-      await updater.update(new UnixTime(999))
-
-      expect(priceUpdater.getPricesWhenReady).not.toHaveBeenCalled()
-      expect(balanceUpdater.getBalancesWhenReady).not.toHaveBeenCalled()
-      expect(suppliesUpdater.getTotalSuppliesWhenReady).not.toHaveBeenCalled()
     })
   })
 
@@ -170,7 +139,6 @@ describe(ArbitrumEBVUpdater.name, () => {
         [MOCK.PROJECT],
         MOCK.TOKENS,
         Logger.SILENT,
-        new UnixTime(0),
       )
 
       await ebvUpdater.start()
@@ -255,7 +223,6 @@ describe(ArbitrumEBVUpdater.name, () => {
         [MOCK.PROJECT],
         MOCK.TOKENS,
         Logger.SILENT,
-        new UnixTime(0),
       )
 
       await ebvUpdater.start()

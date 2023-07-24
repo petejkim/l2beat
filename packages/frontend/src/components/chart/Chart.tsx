@@ -17,10 +17,11 @@ import { TvlActivityToggle } from './TvlActivityToggle'
 import { YAxisLabels } from './YAxisLabels'
 
 export interface ChartProps {
-  type?: 'tvl' | 'activity'
+  type?: 'tvl' | 'detailedTvl' | 'activity'
   title?: string
   id?: string
   tvlEndpoint?: string
+  detailedTvlEndpoint?: string
   activityEndpoint?: string
   tokens?: TokenControl[]
   hasActivity?: boolean
@@ -36,6 +37,7 @@ export function Chart({
   title = 'Chart',
   id = 'chart',
   tvlEndpoint,
+  detailedTvlEndpoint,
   activityEndpoint,
   tokens,
   type = 'tvl',
@@ -59,6 +61,7 @@ export function Chart({
         data-role="chart"
         data-type={type}
         data-tvl-endpoint={tvlEndpoint}
+        data-detailed-tvl-endpoint={detailedTvlEndpoint}
         data-activity-endpoint={activityEndpoint}
         data-milestones={JSON.stringify(milestones)}
         className={cx(

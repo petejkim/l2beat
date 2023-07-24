@@ -19,7 +19,6 @@ export interface ColumnConfig<T> {
   minimalWidth?: true
   headClassName?: string
   noPaddingRight?: true
-  noHrefMobile?: true
   idHref?: SectionId
   getValue: (value: T, index: number) => ReactNode
   tooltip?: string
@@ -95,11 +94,7 @@ export function TableView<T>({
         </thead>
         <tbody className="">
           {items.map((item, i) => {
-            const {
-              href,
-              className: rowClassName,
-              ...rest
-            } = rows?.getProps(item, i) ?? {}
+            const { href, className, ...rest } = rows?.getProps(item, i) ?? {}
             return (
               <tr
                 key={i}
@@ -107,7 +102,7 @@ export function TableView<T>({
                 className={cx(
                   'group cursor-pointer border-b border-b-gray-200 dark:border-b-gray-800',
                   'hover:bg-gray-100 hover:shadow-sm dark:hover:bg-gray-900',
-                  rowClassName,
+                  className,
                 )}
               >
                 {columns.map((column, j) => {
@@ -116,13 +111,6 @@ export function TableView<T>({
                     !column.noPaddingRight && !isLastColumn
                   const idHref =
                     column.idHref && href ? `${href}#${column.idHref}` : href
-
-                  const childClassName = cx(
-                    'h-full w-full items-center',
-                    column.alignRight && 'justify-end',
-                    column.alignCenter && 'justify-center',
-                    hasPaddingRight && 'pr-3 md:pr-4',
-                  )
                   return (
                     <td
                       key={j}
@@ -131,25 +119,17 @@ export function TableView<T>({
                         column.minimalWidth && 'w-0',
                       )}
                     >
-                      {column.noHrefMobile ? (
-                        <>
-                          <span
-                            className={cx(childClassName, 'flex md:hidden')}
-                          >
-                            {column.getValue(item, i)}
-                          </span>
-                          <a
-                            href={idHref}
-                            className={cx(childClassName, 'hidden md:flex')}
-                          >
-                            {column.getValue(item, i)}
-                          </a>
-                        </>
-                      ) : (
-                        <a href={idHref} className={cx(childClassName, 'flex')}>
-                          {column.getValue(item, i)}
-                        </a>
-                      )}
+                      <a
+                        href={idHref}
+                        className={cx(
+                          'flex h-full w-full items-center',
+                          column.alignRight && 'justify-end',
+                          column.alignCenter && 'justify-center',
+                          hasPaddingRight && 'pr-3 md:pr-4',
+                        )}
+                      >
+                        {column.getValue(item, i)}
+                      </a>
                     </td>
                   )
                 })}

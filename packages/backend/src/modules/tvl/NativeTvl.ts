@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/shared'
 
-import { Config } from '../../config'
 import { NMVUpdater } from '../../core/assets/'
 import { Clock } from '../../core/Clock'
 import { PriceUpdater } from '../../core/PriceUpdater'
@@ -10,7 +9,6 @@ import { TvlDatabase } from './types'
 export function createNativeTvlSubmodule(
   db: TvlDatabase,
   priceUpdater: PriceUpdater,
-  config: Config,
   logger: Logger,
   clock: Clock,
 ): TvlSubmodule | undefined {
@@ -22,7 +20,6 @@ export function createNativeTvlSubmodule(
     db.reportStatusRepository,
     clock,
     logger,
-    config.clock.minBlockTimestamp,
   )
 
   // #endregion

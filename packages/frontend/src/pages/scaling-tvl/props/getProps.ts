@@ -37,7 +37,7 @@ export function getProps(
       ),
       footer: getFooterProps(config),
       showActivity: config.features.activity,
-      showMultisigReport: config.features.multisigReport,
+      showL2Assets: config.features.l2assets,
       milestones: config.features.milestones ? config.milestones : [],
     },
     wrapper: {

@@ -14,6 +14,7 @@ export interface State {
   }
   data: {
     aggregateTvl: AggregateTvlResponse | undefined
+    aggregateDetailedTvl: AggregateDetailedTvlResponse | undefined
     alternativeTvl: AggregateTvlResponse | undefined
     activity: ActivityResponse | undefined
     tokenTvl: Record<string, TokenTvlResponse | undefined>
@@ -21,7 +22,7 @@ export interface State {
   }
   controls: {
     pagePathname: string
-    view: 'tvl' | 'activity'
+    view: 'tvl' | 'detailedTvl' | 'activity'
     days: number
     isLogScale: boolean
     currency: 'usd' | 'eth'
@@ -37,7 +38,7 @@ export interface State {
     labels: string[] | undefined
     showHoverAtIndex: number | undefined
     showMilestoneHover: boolean | undefined
-    chart: AggregateTvlChart | TokenTvlChart | ActivityChart | undefined
+    chart: AggregateTvlChart | AggregateDetailedTvlChart | TokenTvlChart | ActivityChart | undefined
   }
 }
 
@@ -46,6 +47,23 @@ export interface AggregateTvlChart {
   points: {
     x: number
     y: number
+    date: string
+    usd: number
+    eth: number
+    milestone?: Milestone
+  }[]
+}
+
+export interface AggregateDetailedTvlChart {
+  type: 'AggregateDetailedTvlChart'
+  points: {
+    x: number
+    ys: {
+        tvl: number,
+        ebv: number,
+        cbv: number,
+        nmv: number,
+    }
     date: string
     usd: number
     eth: number
@@ -89,6 +107,39 @@ export const AggregateTvlResponse = z.object({
   hourly: AggregateTvlChart,
   sixHourly: AggregateTvlChart,
   daily: AggregateTvlChart,
+})
+
+const AggregateDetailedTvlChart = z.object({
+  types: z.tuple([z.literal('timestamp'), z.literal('usd'), z.literal('eth')]),
+  data: z.array(
+    z.tuple([
+      z.number(),
+      z.object({
+        tvl: z.number(),
+        ebv: z.number(),
+        cbv: z.number(),
+        nmv: z.number(),
+      }),
+      z.object({
+        tvl: z.number(),
+        ebv: z.number(),
+        cbv: z.number(),
+        nmv: z.number(),
+      }),
+    ]),
+  ),
+})
+
+//TODO(radomski): Remove this, as it's only for debug purpose
+export type AggregateDetailedTvlChartToRemove = z.infer<typeof AggregateDetailedTvlChart>
+
+export type AggregateDetailedTvlResponse = z.infer<
+  typeof AggregateDetailedTvlResponse
+>
+export const AggregateDetailedTvlResponse = z.object({
+  hourly: AggregateDetailedTvlChart,
+  sixHourly: AggregateDetailedTvlChart,
+  daily: AggregateDetailedTvlChart,
 })
 
 const TokenTvlChart = z.object({

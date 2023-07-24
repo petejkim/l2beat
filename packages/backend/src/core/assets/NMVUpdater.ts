@@ -1,11 +1,5 @@
 import { Logger } from '@l2beat/shared'
-import {
-  assert,
-  ChainId,
-  Hash256,
-  UnixTime,
-  ValueType,
-} from '@l2beat/shared-pure'
+import { ChainId, Hash256, UnixTime, ValueType } from '@l2beat/shared-pure'
 import { setTimeout } from 'timers/promises'
 
 import {
@@ -36,7 +30,6 @@ export class NMVUpdater implements AssetUpdater {
     private readonly reportStatusRepository: ReportStatusRepository,
     private readonly clock: Clock,
     private readonly logger: Logger,
-    private readonly minTimestamp: UnixTime,
   ) {
     this.logger = this.logger.for(this)
 
@@ -60,10 +53,6 @@ export class NMVUpdater implements AssetUpdater {
     return this.configHash
   }
 
-  getMinTimestamp() {
-    return this.minTimestamp
-  }
-
   async start() {
     const known = await this.reportStatusRepository.getByConfigHash(
       this.configHash,
@@ -85,14 +74,6 @@ export class NMVUpdater implements AssetUpdater {
   }
 
   async update(timestamp: UnixTime) {
-    if (!timestamp.gte(this.minTimestamp)) {
-      this.logger.debug('Skipping update', {
-        timestamp: timestamp.toNumber(),
-        minTimestamp: this.minTimestamp.toNumber(),
-      })
-      return
-    }
-
     this.logger.debug('Update started', { timestamp: timestamp.toNumber() })
     const prices = await this.priceUpdater.getPricesWhenReady(timestamp)
     this.logger.debug('Prices ready')
@@ -119,11 +100,6 @@ export class NMVUpdater implements AssetUpdater {
     timestamp: UnixTime,
     refreshIntervalMs = 1000,
   ): Promise<ReportRecord[]> {
-    assert(
-      timestamp.gte(this.minTimestamp),
-      'Programmer error: requested timestamp does not exist',
-    )
-
     while (!this.knownSet.has(timestamp.toNumber())) {
       this.logger.debug('Something is waiting for getReportsWhenReady', {
         timestamp: timestamp.toString(),

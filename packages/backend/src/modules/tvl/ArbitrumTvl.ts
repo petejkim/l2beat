@@ -35,28 +35,22 @@ export function createArbitrumTvlSubmodule(
   const arbitrumProject = filterArbitrumProject(config.projects)
   const arbitrumTokens = getExternalTokens(arbitrumProject)
 
-  const arbitrumProvider = new providers.JsonRpcProvider(
-    config.tvl.arbitrum.providerUrl,
+  const arbitrumProvider = new providers.AlchemyProvider(
     'arbitrum',
+    config.tvl.arbitrum.alchemyApiKey,
   )
 
   const arbiscanClient = new ArbiscanClient(
     http,
     config.tvl.arbitrum.arbiscanApiKey,
-    config.tvl.arbitrum.minBlockTimestamp,
     logger,
   )
 
-  const arbitrumClient = new EthereumClient(arbitrumProvider, logger, 25)
+  const arbitrumClient = new EthereumClient(arbitrumProvider, logger)
 
   const arbitrumMulticall = ArbitrumMulticallClient.forMainnet(arbitrumClient)
 
   const totalSupplyProvider = new ArbitrumTotalSupplyProvider(
-    arbitrumClient,
-    arbitrumMulticall,
-  )
-
-  const arbitrumBalanceProvider = new ArbitrumBalanceProvider(
     arbitrumClient,
     arbitrumMulticall,
   )
@@ -70,7 +64,11 @@ export function createArbitrumTvlSubmodule(
     clock,
     logger,
     ChainId.ARBITRUM,
-    config.tvl.arbitrum.minBlockTimestamp,
+  )
+
+  const arbitrumBalanceProvider = new ArbitrumBalanceProvider(
+    arbitrumClient,
+    arbitrumMulticall,
   )
 
   const arbitrumBalanceUpdater = new BalanceUpdater(
@@ -79,10 +77,9 @@ export function createArbitrumTvlSubmodule(
     db.balanceRepository,
     db.balanceStatusRepository,
     clock,
-    [],
+    arbitrumProject,
     logger,
     ChainId.ARBITRUM,
-    config.tvl.arbitrum.minBlockTimestamp,
   )
 
   const totalSupplyUpdater = new TotalSupplyUpdater(
@@ -94,7 +91,6 @@ export function createArbitrumTvlSubmodule(
     arbitrumTokens,
     logger,
     ChainId.ARBITRUM,
-    config.tvl.arbitrum.minBlockTimestamp,
   )
 
   const ebvUpdater = new ArbitrumEBVUpdater(
@@ -107,7 +103,6 @@ export function createArbitrumTvlSubmodule(
     arbitrumProject,
     arbitrumTokens,
     logger,
-    config.tvl.arbitrum.minBlockTimestamp,
   )
 
   // #endregion

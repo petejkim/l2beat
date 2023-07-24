@@ -1,13 +1,14 @@
 import { State } from '../state/State'
 import { fillBelowChart } from './fillBelowChart'
 import { strokeChartLine } from './strokeChartLine'
-import { getMainStyle, getSecondaryStyle } from './style'
+import { getEBVStyle, getCBVStyle, getMainStyle, getSecondaryStyle, getNMVStyle } from './style'
 
 export function renderChart(
   state: State,
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
 ) {
+  console.log('Rendering chart', state.view.chart)
   if (!state.view.chart) {
     return
   }
@@ -33,6 +34,26 @@ export function renderChart(
     fillBelowChart(ctx, mainPoints, canvas, mainStyle.fillGradient)
     strokeChartLine(ctx, secondaryPoints, canvas, secondaryStyle.strokeGradient)
     strokeChartLine(ctx, mainPoints, canvas, mainStyle.strokeGradient)
+  } else if (state.view.chart.type === 'AggregateDetailedTvlChart') {
+    const cbvFillSTyle = getCBVStyle(canvas, ctx)
+    const ebvFillStyle = getEBVStyle(canvas, ctx)
+    const nmvFillStyle = getNMVStyle(canvas, ctx)
+    const cbvPoints = state.view.chart.points.map((p) => ({
+      x: p.x,
+      y: p.ys.cbv + p.ys.ebv + p.ys.nmv,
+    }))
+    const ebvPoints = state.view.chart.points.map((p) => ({
+      x: p.x,
+      y: p.ys.ebv + p.ys.nmv,
+    }))
+    const nmvPoints = state.view.chart.points.map((p) => ({
+      x: p.x,
+      y: p.ys.nmv,
+    }))
+
+    fillBelowChart(ctx, cbvPoints, canvas, cbvFillSTyle)
+    fillBelowChart(ctx, ebvPoints, canvas, ebvFillStyle)
+    fillBelowChart(ctx, nmvPoints, canvas, nmvFillStyle)
   } else {
     const mainPoints = state.view.chart.points
     fillBelowChart(ctx, mainPoints, canvas, mainStyle.fillGradient)

@@ -4,7 +4,7 @@ export function strokeChartLine(
   ctx: CanvasRenderingContext2D,
   points: { x: number; y: number }[],
   canvas: HTMLCanvasElement,
-  strokeStyle: CanvasGradient,
+  strokeStyle: CanvasFillStrokeStyles['strokeStyle'],
 ) {
   ctx.beginPath()
   moveToMany(points, ctx, canvas)

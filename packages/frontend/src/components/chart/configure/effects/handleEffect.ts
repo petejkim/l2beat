@@ -3,6 +3,8 @@ import { ZodSchema } from 'zod'
 import { Message } from '../messages'
 import {
   ActivityResponse,
+  AggregateDetailedTvlChartToRemove,
+  AggregateDetailedTvlResponse,
   AggregateTvlResponse,
   TokenTvlResponse,
 } from '../state/State'
@@ -11,6 +13,7 @@ import {
   FetchActivityEffect,
   FetchAggregateTvlEffect,
   FetchAlternativeTvlEffect,
+  FetchDetailedAggregateTvlEffect,
   FetchTokenTvlEffect,
 } from './effects'
 
@@ -21,6 +24,8 @@ export function handleEffect(
   switch (effect.type) {
     case 'FetchAggregateTvl':
       return handleFetchAggregateTvl(effect, dispatch)
+    case 'FetchDetailedAggregateTvl':
+      return handleFetchDetailedAggregateTvl(effect, dispatch)
     case 'FetchAlternativeTvl':
       return handleFetchAlternativeTvl(effect, dispatch)
     case 'FetchTokenTvl':
@@ -43,6 +48,45 @@ function handleFetchAggregateTvl(
     () => ({ type: 'AggregateTvlFailed', requestId }),
     AggregateTvlResponse,
   )
+}
+
+function handleFetchDetailedAggregateTvl(
+  { url, requestId }: FetchDetailedAggregateTvlEffect,
+  dispatch: (message: Message) => void,
+) {
+  console.log('radomski', url, requestId)
+  console.log(dispatch)
+  const generateData = () => {
+    const result: AggregateDetailedTvlChartToRemove = {
+      types: ['timestamp', 'usd', 'eth'],
+      data: [],
+    }
+    for (let i = 0; i < 1000; i++) {
+      result.data.push([
+        Date.now(),
+        {
+          tvl: 3*(i * (Math.cos(i / 10) + i)),
+          ebv: i * (Math.cos(i / 10) + i),
+          cbv: i * (Math.cos(i / 10) + i),
+          nmv: i * (Math.cos(i / 10) + i),
+        },
+        {
+          tvl: (i * Math.cos(i / 1000) + 1) + (i * Math.sin(i / 1000) + 1) + (i * Math.cos(i / 1000) + 1),
+          ebv: i * Math.cos(i / 1000) + 1,
+          cbv: i * Math.sin(i / 1000) + 1,
+          nmv: i * Math.cos(i / 1000) + 1,
+        },
+      ])
+    }
+
+    return result
+  }
+  const data: AggregateDetailedTvlResponse = {
+    hourly: generateData(),
+    sixHourly: generateData(),
+    daily: generateData(),
+  }
+  dispatch({ type: 'AggregateDetailedTvlLoaded', requestId, data })
 }
 
 function handleFetchAlternativeTvl(

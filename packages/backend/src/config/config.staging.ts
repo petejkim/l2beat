@@ -8,6 +8,7 @@ export function getStagingConfig(): Config {
     ...productionConfig,
     activity: productionConfig.activity && {
       ...productionConfig.activity,
+      skipExplicitExclusion: true,
     },
     name: 'Backend/Staging',
   }

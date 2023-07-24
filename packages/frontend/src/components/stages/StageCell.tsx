@@ -19,7 +19,6 @@ export function StageCell({ item }: StageCellProps) {
       className="Tooltip"
       title={renderToStaticMarkup(<StageTooltip item={item} />)}
       data-tooltip-big
-      data-tooltip-mobile-disabled
     >
       <StageBadge stage={item.stage} oneSize />
     </div>
