@@ -38,3 +38,24 @@ export function getSecondaryStyle(
 
   return { strokeGradient, fillGradient }
 }
+
+export function getCBVStyle(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+) {
+    return "#7E41CC"
+}
+
+export function getEBVStyle(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+) {
+    return "#FFC107"
+}
+
+export function getNMVStyle(
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+) {
+    return "#FF46C0"
+}

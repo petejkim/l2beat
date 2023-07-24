@@ -17,7 +17,7 @@ export function calculateDetailedTvlView(
   const entries = response.daily.data
   const dateRange = formatRange(entries[0][0], entries[entries.length - 1][0])
   const { labels, getY } = getYAxis(
-    entries.map((x) => (controls.currency === 'usd' ? x[1].tvl : x[2].tvl)),
+    entries.flatMap((x) => (controls.currency === 'usd' ? [x[1].tvl, x[1].nmv] : [x[2].tvl, x[2].nmv])),
     controls.labelCount,
     controls.isLogScale,
     (x) => formatCurrency(x, controls.currency),
@@ -27,8 +27,8 @@ export function calculateDetailedTvlView(
     x: i / (entries.length - 1),
     ys: {
         tvl: getY(controls.currency === 'usd' ? usd.tvl : eth.tvl),
-        ebv: getY(controls.currency === 'usd' ? usd.ebv : eth.ebv),
-        cbv: getY(controls.currency === 'usd' ? usd.cbv : eth.cbv),
+        cbv: getY(controls.currency === 'usd' ? usd.cbv + usd.ebv + usd.nmv : eth.cbv + eth.ebv + eth.nmv),
+        ebv: getY(controls.currency === 'usd' ? usd.ebv + usd.nmv : eth.ebv + eth.nmv),
         nmv: getY(controls.currency === 'usd' ? usd.nmv : eth.nmv),
     },
     date: formatTimestamp(timestamp, true),

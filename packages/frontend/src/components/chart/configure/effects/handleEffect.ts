@@ -61,21 +61,20 @@ function handleFetchDetailedAggregateTvl(
       types: ['timestamp', 'usd', 'eth'],
       data: [],
     }
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100; i++) {
+
+        const datum = {
+          tvl: 0,
+          cbv: 20 + Math.random() * 10,
+          ebv: 20 + Math.random() * 10,
+          nmv: 25 + Math.random() * 10
+        }
+        datum.tvl = datum.ebv + datum.cbv + datum.nmv
+
       result.data.push([
         Date.now(),
-        {
-          tvl: 3*(i * (Math.cos(i / 10) + i)),
-          ebv: i * (Math.cos(i / 10) + i),
-          cbv: i * (Math.cos(i / 10) + i),
-          nmv: i * (Math.cos(i / 10) + i),
-        },
-        {
-          tvl: (i * Math.cos(i / 1000) + 1) + (i * Math.sin(i / 1000) + 1) + (i * Math.cos(i / 1000) + 1),
-          ebv: i * Math.cos(i / 1000) + 1,
-          cbv: i * Math.sin(i / 1000) + 1,
-          nmv: i * Math.cos(i / 1000) + 1,
-        },
+        datum,
+        datum,
       ])
     }
 
