@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { ActiveIcon } from '../../../components/icons/symbols/ActiveIcon'
 import { ScalingLegend } from '../../../components/ScalingLegend'
 import { getScalingRowProps } from "../../../components/table/props/getScalingRowProps"

@@ -178,7 +178,6 @@ function createPattern(
 
   patternCanvas.width = canvas.width / 48
   patternCanvas.height = (patternCanvas.width / 4) * Math.sqrt(3) * 4
-  console.log(patternCanvas.width, patternCanvas.height)
 
   drawCmd(patternCanvas, patternCtx)
 

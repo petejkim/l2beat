@@ -2,11 +2,11 @@ import { State } from '../state/State'
 import { fillBelowChart } from './fillBelowChart'
 import { strokeChartLine } from './strokeChartLine'
 import {
-  getEBVStyle,
   getCBVStyle,
+  getEBVStyle,
   getMainStyle,
-  getSecondaryStyle,
   getNMVStyle,
+  getSecondaryStyle,
 } from './style'
 
 export function renderChart(
@@ -45,15 +45,15 @@ export function renderChart(
     const nmvFillStyle = getNMVStyle(canvas, ctx)
     const cbvPoints = state.view.chart.points.map((p) => ({
       x: p.x,
-      y: p.ys.cbv,
+      y: p.parts.cbv,
     }))
     const ebvPoints = state.view.chart.points.map((p) => ({
       x: p.x,
-      y: p.ys.ebv,
+      y: p.parts.ebv,
     }))
     const nmvPoints = state.view.chart.points.map((p) => ({
       x: p.x,
-      y: p.ys.nmv,
+      y: p.parts.nmv,
     }))
 
     fillBelowChart(ctx, cbvPoints, canvas, cbvFillSTyle)

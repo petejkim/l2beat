@@ -58,8 +58,8 @@ export interface AggregateDetailedTvlChart {
   type: 'AggregateDetailedTvlChart'
   points: {
     x: number
-    ys: {
-        tvl: number,
+    y: number,
+    parts: {
         ebv: number,
         cbv: number,
         nmv: number,

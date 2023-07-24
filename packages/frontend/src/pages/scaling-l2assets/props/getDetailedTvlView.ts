@@ -1,4 +1,5 @@
 import { Layer2 } from '@l2beat/config'
+
 import { Config } from '../../../build/config'
 import { isAnySectionUnderReview } from '../../../utils/project/isAnySectionUnderReview'
 import { getRiskValues } from '../../../utils/risks/values'
