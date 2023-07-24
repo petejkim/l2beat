@@ -1,6 +1,7 @@
 import { formatRange, formatTimestamp } from '../../../../../utils'
 import { State } from '../../state/State'
 import { formatCurrency } from './format'
+import { getAppropriateDetailedEntries } from './getAppropriateEntries'
 import { getYAxis } from './getYAxis'
 
 export function calculateDetailedTvlView(
@@ -12,8 +13,8 @@ export function calculateDetailedTvlView(
     return undefined
   }
 
-  // const entries = getAppropriateEntries(controls.days, response)
-  const entries = response.daily.data
+  const entries = getAppropriateDetailedEntries(controls.days, response)
+  console.log(entries)
   const dateRange = formatRange(entries[0][0], entries[entries.length - 1][0])
   const { labels, getY } = getYAxis(
     entries.flatMap((x) => (controls.currency === 'usd' ? [x[1].tvl, x[1].nmv] : [x[2].tvl, x[2].nmv])),
