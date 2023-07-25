@@ -26,6 +26,7 @@ export interface ChartProps {
   tokens?: TokenControl[]
   hasActivity?: boolean
   hasTvl?: boolean
+  hasDetailedTvl?: boolean
   metaChart?: boolean
   mobileFull?: boolean
   milestones?: Milestone[]
@@ -43,6 +44,7 @@ export function Chart({
   type = 'tvl',
   hasActivity,
   hasTvl = true,
+  hasDetailedTvl,
   metaChart = false,
   mobileFull: fullWidth = false,
   milestones,
@@ -71,12 +73,12 @@ export function Chart({
           sectionClassName,
         )}
       >
-        {!metaChart && hasTvl && hasActivity && (
+        {!metaChart && (hasTvl && hasActivity) || (hasTvl && hasDetailedTvl) && (
           <div className="mb-4 gap-5 md:mb-6 md:flex md:items-center">
             <h2 className="hidden text-2xl font-bold md:block md:text-4xl md:leading-normal">
               <a href={`#${id}`}>{title}</a>
             </h2>
-            <TvlActivityToggle />
+            <TvlActivityToggle hasActivity hasDetailedTvl/>
           </div>
         )}
         <div className="flex flex-col gap-4">

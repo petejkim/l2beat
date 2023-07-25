@@ -44,8 +44,11 @@ export function setupControls(
     dispatch({ type: 'ShowAlternativeTvlChanged', showAlternativeTvl: checked })
   })
 
-  onCheckboxChange(elements.controls.showActivity, (checked) => {
-    dispatch({ type: 'ViewChanged', view: checked ? 'activity' : 'tvl' })
+  onRadioChange(elements.controls.showActivity, (control) => {
+    dispatch({
+      type: 'ViewChanged',
+      view: control.value === 'activity' ? 'activity' : 'tvl',
+    })
   })
 
   onCheckboxChange(elements.controls.showEthereum, (checked) => {

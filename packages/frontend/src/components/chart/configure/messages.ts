@@ -25,7 +25,7 @@ export interface InitMessage {
 
 export interface ViewChangedMessage {
   type: 'ViewChanged'
-  view: 'tvl' | 'activity'
+  view: 'tvl' | 'detailedTvl' | 'activity'
 }
 
 export interface DaysChangedMessage {
