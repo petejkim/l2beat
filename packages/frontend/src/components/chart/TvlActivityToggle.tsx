@@ -26,89 +26,57 @@ export function TvlActivityToggle({
         'md:before:rounded-xl',
       )}
     >
-      <label
-        className={cx(
-          'bg-purple-300 text-lg font-bold dark:bg-purple-700',
-          'flex items-center p-[5px] md:p-[7px]',
-          'cursor-pointer select-none rounded-[5px] md:rounded-[11px]',
-          'relative z-20',
-        )}
-      >
-        <input
-          defaultChecked={true}
-          id="tvl-activity-detailed"
-          name="tvl-activity"
-          type="radio"
-          autoComplete="off"
-          className="peer opacity-0"
-          value="tvl"
-        />
-        {hasDetailedTvl && (
-          <div
-            className={cx(
-              'flex-1 py-1 md:flex-auto md:px-6 md:py-1.5',
-              'flex justify-center',
-              'rounded md:rounded-md',
-              'peer-checked:text-white',
-              'peer-checked:bg-gradient-to-r',
-              'peer-checked:from-purple-100',
-              'peer-checked:to-pink-100',
-            )}
-          >
-            Detailed TVL
-          </div>
-        )}
-      </label>
-      <label
-        className={cx(
-          'bg-purple-300 text-lg font-bold dark:bg-purple-700',
-          'flex items-center p-[5px] md:p-[7px]',
-          'cursor-pointer select-none rounded-[5px] md:rounded-[11px]',
-          'relative z-20',
-        )}
-      >
-        <input
-          id="tvl-activity-tvl"
-          defaultChecked={false}
-          name="tvl-activity"
-          type="radio"
-          autoComplete="off"
-          className="peer opacity-0"
-          value="tvl"
-        />
-        <div
+      <div className="relative z-20 inline-flex overflow-hidden rounded-[11px] bg-purple-300 px-[5px] text-base dark:bg-purple-700 md:px-[7px]">
+        <label
           className={cx(
-            'flex-1 py-1 md:flex-auto md:px-6 md:py-1.5',
-            'flex justify-center',
-            'rounded md:rounded-md',
-            'peer-checked:text-white',
-            'peer-checked:bg-gradient-to-r',
-            'peer-checked:from-purple-100',
-            'peer-checked:to-pink-100',
+            'bg-purple-300 text-lg font-bold dark:bg-purple-700',
+            'block items-center py-[5px] md:py-[7px]',
+            'cursor-pointer select-none',
+            'relative select-none',
           )}
         >
-          <span className="hidden md:inline">Total Value Locked</span>
-          <span className="md:hidden">TVL</span>
-        </div>
-      </label>
-      <label
-        className={cx(
-          'bg-purple-300 text-lg font-bold dark:bg-purple-700',
-          'flex items-center p-[5px] md:p-[7px]',
-          'cursor-pointer select-none rounded-[5px] md:rounded-[11px]',
-          'relative z-20',
-        )}
-      >
-        <input
-          id="tvl-activity-activity"
-          name="tvl-activity"
-          defaultChecked={false}
-          type="radio"
-          autoComplete="off"
-          className="peer opacity-0"
-          value="activity"
-        />
-        {hasActivity && (
+          <input
+            defaultChecked={true}
+            id="tvl-activity-detailed"
+            name="tvl-activity"
+            type="radio"
+            autoComplete="off"
+            className="peer hidden"
+            value="tvl"
+          />
+          {hasDetailedTvl && (
+            <div
+              className={cx(
+                'flex-1 py-1 md:flex-auto md:px-6 md:py-1.5',
+                'flex justify-center',
+                'rounded md:rounded-md',
+                'peer-checked:text-white',
+                'peer-checked:bg-gradient-to-r',
+                'peer-checked:from-purple-100',
+                'peer-checked:to-pink-100',
+              )}
+            >
+              Detailed TVL
+            </div>
+          )}
+        </label>
+        <label
+          className={cx(
+            'bg-purple-300 text-lg font-bold dark:bg-purple-700',
+            'flex items-center py-[5px] md:py-[7px]',
+            'cursor-pointer select-none',
+            'relative ',
+          )}
+        >
+          <input
+            id="tvl-activity-tvl"
+            defaultChecked={false}
+            name="tvl-activity"
+            type="radio"
+            autoComplete="off"
+            className="peer hidden"
+            value="tvl"
+          />
           <div
             className={cx(
               'flex-1 py-1 md:flex-auto md:px-6 md:py-1.5',
@@ -120,10 +88,44 @@ export function TvlActivityToggle({
               'peer-checked:to-pink-100',
             )}
           >
-            Activity
+            <span className="hidden md:inline">Total Value Locked</span>
+            <span className="md:hidden">TVL</span>
           </div>
-        )}
-      </label>
+        </label>
+        <label
+          className={cx(
+            'bg-purple-300 text-lg font-bold dark:bg-purple-700',
+            'flex items-center py-[5px] md:py-[7px]',
+            'cursor-pointer select-none',
+            'relative ',
+          )}
+        >
+          <input
+            id="tvl-activity-activity"
+            name="tvl-activity"
+            defaultChecked={false}
+            type="radio"
+            autoComplete="off"
+            className="peer hidden"
+            value="activity"
+          />
+          {hasActivity && (
+            <div
+              className={cx(
+                'flex-1 py-1 md:flex-auto md:px-6 md:py-1.5',
+                'flex justify-center',
+                'rounded md:rounded-md',
+                'peer-checked:text-white',
+                'peer-checked:bg-gradient-to-r',
+                'peer-checked:from-purple-100',
+                'peer-checked:to-pink-100',
+              )}
+            >
+              Activity
+            </div>
+          )}
+        </label>
+      </div>
     </div>
   )
 }
