@@ -10,7 +10,7 @@ export function getChartElements(chart: HTMLElement) {
       ),
       showActivity: Array.from(
         chart.querySelectorAll<HTMLInputElement>(
-          '[data-role="toggle-tvl-activity"] input',
+          '[data-role="radio-chart-type-controls"] input',
         ),
       ),
       showEthereum: chart.querySelector<HTMLInputElement>(

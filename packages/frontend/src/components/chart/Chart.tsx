@@ -13,7 +13,7 @@ import { RangeControls } from './RangeControls'
 import { ScaleControls } from './ScaleControls'
 import { TimeRange } from './TimeRange'
 import { TokenControl, TokenControls } from './TokenControls'
-import { TvlActivityToggle } from './TvlActivityToggle'
+import { RadioChartTypeControl } from './RadioChartTypeControl'
 import { YAxisLabels } from './YAxisLabels'
 
 export interface ChartProps {
@@ -78,7 +78,8 @@ export function Chart({
             <h2 className="hidden text-2xl font-bold md:block md:text-4xl md:leading-normal">
               <a href={`#${id}`}>{title}</a>
             </h2>
-            <TvlActivityToggle hasActivity hasDetailedTvl/>
+
+            <RadioChartTypeControl hasActivity hasDetailedTvl/>
           </div>
         )}
         <div className="flex flex-col gap-4">
