@@ -8,7 +8,7 @@ export function getChartElements(chart: HTMLElement) {
       showCombined: document.querySelector<HTMLInputElement>(
         '[data-role="chart-combined"]',
       ),
-      showActivity: Array.from(
+      chartType: Array.from(
         chart.querySelectorAll<HTMLInputElement>(
           '[data-role="radio-chart-type-controls"] input',
         ),

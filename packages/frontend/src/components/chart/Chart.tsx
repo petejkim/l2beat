@@ -9,11 +9,11 @@ import { ChartLoader } from './ChartLoader'
 import { ChartUpcoming } from './ChartUpcoming'
 import { CurrencyControls } from './CurrencyControls'
 import { EthereumActivityToggle } from './EthereumActivityToggle'
+import { RadioChartTypeControl } from './RadioChartTypeControl'
 import { RangeControls } from './RangeControls'
 import { ScaleControls } from './ScaleControls'
 import { TimeRange } from './TimeRange'
 import { TokenControl, TokenControls } from './TokenControls'
-import { RadioChartTypeControl } from './RadioChartTypeControl'
 import { YAxisLabels } from './YAxisLabels'
 
 export interface ChartProps {
