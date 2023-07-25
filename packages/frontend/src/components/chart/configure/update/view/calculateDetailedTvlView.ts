@@ -34,6 +34,16 @@ export function calculateDetailedTvlView(
     date: formatTimestamp(timestamp, true),
     usd: usd.tvl,
     eth: eth.tvl,
+    usdParts: {
+        cbv: usd.cbv,
+        ebv: usd.ebv,
+        nmv: usd.nmv,
+    },
+    ethParts: {
+        cbv: usd.cbv,
+        ebv: usd.ebv,
+        nmv: usd.nmv,
+    },
     milestone: data.milestones[timestamp],
   }))
 

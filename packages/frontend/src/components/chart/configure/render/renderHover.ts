@@ -110,13 +110,13 @@ export function renderHover(
           rows.push(renderCurrencyRow(point.usd, 'USD'))
           rows.push(renderCurrencyRow(point.eth, 'ETH'))
         }
-      } else if (state.view.chart.type === 'AggregateDetailedTvlChart' && 'usd' in point) {
+      } else if (state.view.chart.type === 'AggregateDetailedTvlChart' && 'usd' in point && 'usdParts' in point) {
           rows.push(renderHorizontalSeparator())
           rows.push(renderTVLRow(point.usd))
           rows.push(renderHorizontalSeparator())
-          rows.push(renderCBVRow(point.usd))
-          rows.push(renderEBVRow(point.usd))
-          rows.push(renderNMVRow(point.usd))
+          rows.push(renderCBVRow(point.usdParts.cbv))
+          rows.push(renderEBVRow(point.usdParts.ebv))
+          rows.push(renderNMVRow(point.usdParts.nmv))
       } else if (
         state.view.chart.type === 'TokenTvlChart' &&
         'balance' in point

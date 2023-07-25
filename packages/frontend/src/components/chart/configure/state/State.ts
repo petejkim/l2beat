@@ -67,6 +67,16 @@ export interface AggregateDetailedTvlChart {
     date: string
     usd: number
     eth: number
+    usdParts: {
+        ebv: number,
+        cbv: number,
+        nmv: number,
+    }
+    ethParts: {
+        ebv: number,
+        cbv: number,
+        nmv: number,
+    }
     milestone?: Milestone
   }[]
 }
