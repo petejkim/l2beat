@@ -1,4 +1,4 @@
-import { EtherscanClient } from '@l2beat/shared'
+import { EtherscanLikeClient } from '@l2beat/shared'
 import { Bytes, EthereumAddress, Hash256 } from '@l2beat/shared-pure'
 import { providers } from 'ethers'
 
@@ -23,8 +23,8 @@ export interface ContractMetadata {
  */
 export class DiscoveryProvider {
   constructor(
-    private readonly provider: providers.Provider,
-    private readonly etherscanClient: EtherscanClient,
+    private readonly rpcProvider: providers.Provider,
+    private readonly etherscanLikeClient: EtherscanLikeClient,
   ) {}
 
   async call(
@@ -32,7 +32,7 @@ export class DiscoveryProvider {
     data: Bytes,
     blockNumber: number,
   ): Promise<Bytes> {
-    const result = await this.provider.call(
+    const result = await this.rpcProvider.call(
       { to: address.toString(), data: data.toString() },
       blockNumber,
     )
@@ -44,7 +44,7 @@ export class DiscoveryProvider {
     slot: number | bigint | Bytes,
     blockNumber: number,
   ): Promise<Bytes> {
-    const result = await this.provider.getStorageAt(
+    const result = await this.rpcProvider.getStorageAt(
       address.toString(),
       slot instanceof Bytes ? slot.toString() : slot,
       blockNumber,
@@ -58,7 +58,7 @@ export class DiscoveryProvider {
     fromBlock: number,
     toBlock: number,
   ): Promise<providers.Log[]> {
-    return this.provider.getLogs({
+    return this.rpcProvider.getLogs({
       address: address.toString(),
       fromBlock,
       toBlock,
@@ -67,16 +67,19 @@ export class DiscoveryProvider {
   }
 
   async getTransaction(transactionHash: Hash256) {
-    return this.provider.getTransaction(transactionHash.toString())
+    return this.rpcProvider.getTransaction(transactionHash.toString())
   }
 
   async getCode(address: EthereumAddress, blockNumber: number): Promise<Bytes> {
-    const result = await this.provider.getCode(address.toString(), blockNumber)
+    const result = await this.rpcProvider.getCode(
+      address.toString(),
+      blockNumber,
+    )
     return Bytes.fromHex(result)
   }
 
   async getMetadata(address: EthereumAddress): Promise<ContractMetadata> {
-    const result = await this.etherscanClient.getContractSource(address)
+    const result = await this.etherscanLikeClient.getContractSource(address)
     const isVerified = result.ABI !== 'Contract source code not verified'
 
     return {
@@ -88,7 +91,7 @@ export class DiscoveryProvider {
   }
 
   async getContractDeploymentTx(address: EthereumAddress) {
-    return this.etherscanClient.getContractDeploymentTx(address)
+    return this.etherscanLikeClient.getContractDeploymentTx(address)
   }
 
   async getDeployer(address: EthereumAddress) {
