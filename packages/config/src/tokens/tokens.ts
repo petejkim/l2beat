@@ -27,8 +27,8 @@ you are out of luck. We will fix this in the future.
 
 /*
 
-                         === How to add new token ===
-                        Please read before adding tokens
+  === How to add new token ===
+  Please read before adding tokens
 
 1. Find the token Ethereum address
 2. Run the script `yarn tokens:add <address> <category>`
