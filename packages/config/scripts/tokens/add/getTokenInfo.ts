@@ -3,7 +3,7 @@ import { AssetId, EthereumAddress, UnixTime } from '@l2beat/shared-pure'
 import { providers, utils } from 'ethers'
 import { z } from 'zod'
 
-import { TokenInfo } from '../../../src/tokens/types'
+import { TokenInfo } from '../../../src'
 import { getEnv } from '../../checkVerifiedContracts/utils'
 
 export async function getTokenInfo(

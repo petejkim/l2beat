@@ -11,7 +11,7 @@ should create a new migration file that fixes the issue.
 
 */
 
-import { tokenList } from '@l2beat/config'
+import { canonicalTokensList } from '@l2beat/config'
 import { Knex } from 'knex'
 
 export async function up(knex: Knex) {
@@ -20,7 +20,7 @@ export async function up(knex: Knex) {
     table.index('unix_timestamp')
   })
   await Promise.all(
-    tokenList.map(({ id, coingeckoId }) => {
+    canonicalTokensList.map(({ id, coingeckoId }) => {
       return knex('coingecko_prices')
         .update({ asset_id: id.toString() })
         .whereRaw('coingecko_id = ?', [coingeckoId.toString()])
@@ -43,7 +43,7 @@ export async function down(knex: Knex) {
     table.string('coingecko_id')
   })
   await Promise.all(
-    tokenList.map(({ id, coingeckoId }) => {
+    canonicalTokensList.map(({ id, coingeckoId }) => {
       return (
         knex('coingecko_prices')
           // @ts-expect-error coingecko_id removed from knex types module

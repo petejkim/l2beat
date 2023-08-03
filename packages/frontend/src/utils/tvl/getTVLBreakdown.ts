@@ -1,4 +1,4 @@
-import { safeGetTokenByAssetId } from '@l2beat/config'
+import { safeGetCanonicalTokenByAssetId } from '@l2beat/config'
 import { TvlApiToken } from '@l2beat/shared-pure'
 
 import { TVLBreakdownProps } from '../../components/TVLBreakdown'
@@ -29,7 +29,7 @@ function getPartialTVLBreakdown(
   let other = 0
 
   for (const { assetId, tvl } of tokens) {
-    const token = safeGetTokenByAssetId(assetId)
+    const token = safeGetCanonicalTokenByAssetId(assetId)
     if (!token) {
       other += tvl
     } else if (associatedTokens.includes(token.symbol)) {

@@ -1,4 +1,4 @@
-import { Bridge, Layer2, safeGetTokenByAssetId } from '@l2beat/config'
+import { Bridge, Layer2, safeGetCanonicalTokenByAssetId } from '@l2beat/config'
 import {
   ActivityApiResponse,
   DetailedTvlApiResponse,
@@ -35,7 +35,7 @@ function getTokens(
 ) {
   return tvlApiResponse.projects[projectId.toString()]?.tokens
     .map(({ assetId, tvl }) => {
-      const symbol = safeGetTokenByAssetId(assetId)?.symbol
+      const symbol = safeGetCanonicalTokenByAssetId(assetId)?.symbol
       if (symbol) {
         return {
           symbol,

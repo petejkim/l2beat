@@ -1,4 +1,4 @@
-import { bridges, layer2s, tokenList } from '@l2beat/config'
+import { bridges, canonicalTokensList, layer2s } from '@l2beat/config'
 import { EtherscanClient, getEnv, LogLevel } from '@l2beat/shared'
 import { ChainId, UnixTime } from '@l2beat/shared-pure'
 
@@ -19,7 +19,7 @@ export function getProductionConfig(): Config {
   return {
     name: 'Backend/Production',
     projects: layer2s.map(layer2ToProject).concat(bridges.map(bridgeToProject)),
-    tokens: tokenList,
+    tokens: canonicalTokensList,
     logger: {
       logLevel: getEnv.integer('LOG_LEVEL', LogLevel.INFO),
       format: 'json',

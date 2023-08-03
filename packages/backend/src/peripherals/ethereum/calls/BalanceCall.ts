@@ -1,4 +1,4 @@
-import { getTokenByAssetId } from '@l2beat/config'
+import { getCanonicalTokenByAssetId } from '@l2beat/config'
 import { AssetId, Bytes, EthereumAddress } from '@l2beat/shared-pure'
 import { BigNumber, utils } from 'ethers'
 
@@ -26,7 +26,7 @@ export const BalanceCall = {
     } else {
       return {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        address: getTokenByAssetId(asset).address!,
+        address: getCanonicalTokenByAssetId(asset).address!,
         data: Bytes.fromHex(
           coder.encodeFunctionData('balanceOf', [holder.toString()]),
         ),

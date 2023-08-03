@@ -1,4 +1,4 @@
-import { tokenList } from '../../src'
+import { canonicalTokensList } from '../../src'
 import { escrowTimestamps } from './escrowTimestamps'
 import { IntermediateConfig } from './generateIntermediateConfig'
 
@@ -12,7 +12,7 @@ export function generateFinalConfig(config: IntermediateConfig) {
         .map((address) =>
           address === 'ETH'
             ? 'ETH'
-            : tokenList.find((y) => y.address === address)?.symbol,
+            : canonicalTokensList.find((y) => y.address === address)?.symbol,
         )
         .filter(noUndefined),
     }))

@@ -1,4 +1,4 @@
-import { getTokenByAssetId } from '@l2beat/config'
+import { getCanonicalTokenByAssetId } from '@l2beat/config'
 import { AssetId, Bytes, EthereumAddress } from '@l2beat/shared-pure'
 import { expect } from 'earl'
 import { utils } from 'ethers'
@@ -34,7 +34,7 @@ describe('BalanceCall', () => {
       const encoded = BalanceCall.encode(MOCK_HOLDER, token)
 
       expect(encoded).toEqual({
-        address: getTokenByAssetId(token)!.address!,
+        address: getCanonicalTokenByAssetId(token)!.address!,
         data: Bytes.fromHex(
           coder.encodeFunctionData('balanceOf', [MOCK_HOLDER.toString()]),
         ),

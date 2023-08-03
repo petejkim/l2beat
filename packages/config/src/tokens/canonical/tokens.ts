@@ -41,11 +41,13 @@ import { AssetId } from '@l2beat/shared-pure'
 import { tokens } from './tokenList.json'
 import { TokenInfo } from './types'
 
-export const tokenList: TokenInfo[] = tokens.map((t) => TokenInfo.parse(t))
+export const canonicalTokensList: TokenInfo[] = tokens.map((t) =>
+  TokenInfo.parse(t),
+)
 
-const tokenMap = new Map(tokenList.map((t) => [t.symbol, t] as const))
+const tokenMap = new Map(canonicalTokensList.map((t) => [t.symbol, t] as const))
 
-export function getTokenBySymbol(symbol: string) {
+export function getCanonicalTokenBySymbol(symbol: string) {
   const token = tokenMap.get(symbol)
   if (!token) {
     throw new TypeError(`Unknown token ${symbol}`)
@@ -53,13 +55,15 @@ export function getTokenBySymbol(symbol: string) {
   return token
 }
 
-const tokenMapByAssetId = new Map(tokenList.map((t) => [t.id, t] as const))
+const tokenMapByAssetId = new Map(
+  canonicalTokensList.map((t) => [t.id, t] as const),
+)
 
-export function safeGetTokenByAssetId(assetId: AssetId) {
+export function safeGetCanonicalTokenByAssetId(assetId: AssetId) {
   return tokenMapByAssetId.get(assetId)
 }
 
-export function getTokenByAssetId(assetId: AssetId) {
+export function getCanonicalTokenByAssetId(assetId: AssetId) {
   const token = tokenMapByAssetId.get(assetId)
   if (!token) {
     throw new TypeError(`Unknown token ${assetId.toString()}`)

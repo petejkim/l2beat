@@ -1,4 +1,4 @@
-import { tokenList } from '@l2beat/config'
+import { canonicalTokensList } from '@l2beat/config'
 import { Logger } from '@l2beat/shared'
 import {
   AssetId,
@@ -21,8 +21,8 @@ import { ReportStatusRepository } from '../../../peripherals/database/ReportStat
 import { reduceDuplicatedReports, TvlController } from './TvlController'
 
 const START = UnixTime.fromDate(new Date('2022-05-31'))
-const DAI = tokenList.find((x) => x.symbol === 'DAI')!
-const USDC = tokenList.find((x) => x.symbol === 'USDC')!
+const DAI = canonicalTokensList.find((x) => x.symbol === 'DAI')!
+const USDC = canonicalTokensList.find((x) => x.symbol === 'USDC')!
 
 const OPTIMISM: ReportProject = {
   projectId: ProjectId('optimism'),

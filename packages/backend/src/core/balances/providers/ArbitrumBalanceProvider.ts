@@ -1,4 +1,4 @@
-import { getTokenByAssetId } from '@l2beat/config'
+import { getCanonicalTokenByAssetId } from '@l2beat/config'
 import {
   assert,
   AssetId,
@@ -88,7 +88,9 @@ export class ArbitrumBalanceProvider implements BalanceProvider {
         return this.arbitrumClient.getBalance(balanceQuery.holder, blockNumber)
       }
 
-      const tokenAddress = getTokenByAssetId(balanceQuery.assetId).address
+      const tokenAddress = getCanonicalTokenByAssetId(
+        balanceQuery.assetId,
+      ).address
 
       assert(
         tokenAddress,
@@ -133,7 +135,7 @@ export class ArbitrumBalanceProvider implements BalanceProvider {
       )
     }
 
-    const tokenAddress = getTokenByAssetId(assetId).address
+    const tokenAddress = getCanonicalTokenByAssetId(assetId).address
 
     assert(
       tokenAddress,

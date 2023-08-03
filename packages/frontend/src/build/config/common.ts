@@ -1,4 +1,9 @@
-import { bridges, layer2s, milestonesLayer2s, tokenList } from '@l2beat/config'
+import {
+  bridges,
+  canonicalTokensList,
+  layer2s,
+  milestonesLayer2s,
+} from '@l2beat/config'
 
 import { Config } from './Config'
 
@@ -32,6 +37,6 @@ export const common: Omit<Config, 'backend'> = {
   },
   layer2s,
   bridges,
-  tokens: tokenList,
+  tokens: canonicalTokensList,
   milestones: milestonesLayer2s,
 }

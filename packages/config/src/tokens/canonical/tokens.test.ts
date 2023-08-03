@@ -3,11 +3,11 @@ import { AssetId, CoingeckoId, EthereumAddress } from '@l2beat/shared-pure'
 import { expect } from 'earl'
 import { Contract, providers, utils } from 'ethers'
 
-import { config } from '../test/config'
-import { tokenList } from './tokens'
+import { canonicalTokensList } from './tokens'
+import { config } from '../../test/config'
 
 describe('tokens', () => {
-  const addresses = tokenList.map((x) => x.address)
+  const addresses = canonicalTokensList.map((x) => x.address)
 
   it('every token has a unique address', () => {
     const everyUnique = addresses.every((x, i) => addresses.indexOf(x) === i)
@@ -15,13 +15,13 @@ describe('tokens', () => {
   })
 
   it('every token has a unique symbol', () => {
-    const symbols = tokenList.map((x) => x.symbol)
+    const symbols = canonicalTokensList.map((x) => x.symbol)
     const everyUnique = symbols.every((x, i) => symbols.indexOf(x) === i)
     expect(everyUnique).toEqual(true)
   })
 
   it('tokens are ordered alphabetically', () => {
-    const names = tokenList.map((x) => x.name)
+    const names = canonicalTokensList.map((x) => x.name)
     const sorted = [...names].sort((a, b) => a.localeCompare(b))
     expect(names).toEqual(sorted)
   })
@@ -46,7 +46,7 @@ describe('tokens', () => {
       decimals: number
     }
     const results: Record<string, Metadata> = {}
-    const checkedTokens = tokenList.filter(
+    const checkedTokens = canonicalTokensList.filter(
       (x) => x.id !== AssetId('op-optimism'),
     )
 
@@ -136,7 +136,7 @@ describe('tokens', () => {
         result.set(EthereumAddress(coin.platforms.ethereum), coin.id)
     })
 
-    tokenList.map((token) => {
+    canonicalTokensList.map((token) => {
       if (token.symbol === 'ETH') {
         expect(token.coingeckoId).toEqual(CoingeckoId('ethereum'))
       } else {

@@ -1,11 +1,11 @@
 import {
   Bridge,
-  getTokenBySymbol,
+  canonicalTokensList,
+  getCanonicalTokenBySymbol,
   Layer2,
   Layer2ExternalAssets,
   Layer2TransactionApi,
   TokenInfo,
-  tokenList,
 } from '@l2beat/config'
 import { EthereumAddress, ProjectId, UnixTime } from '@l2beat/shared-pure'
 
@@ -32,7 +32,9 @@ export function layer2ToProject(layer2: Layer2): Project {
       address: escrow.address,
       sinceTimestamp: escrow.sinceTimestamp,
       tokens:
-        escrow.tokens === '*' ? tokenList : escrow.tokens.map(getTokenBySymbol),
+        escrow.tokens === '*'
+          ? canonicalTokensList
+          : escrow.tokens.map(getCanonicalTokenBySymbol),
     })),
     transactionApi: layer2.config.transactionApi,
   }
@@ -47,7 +49,9 @@ export function bridgeToProject(bridge: Bridge): Project {
       address: escrow.address,
       sinceTimestamp: escrow.sinceTimestamp,
       tokens:
-        escrow.tokens === '*' ? tokenList : escrow.tokens.map(getTokenBySymbol),
+        escrow.tokens === '*'
+          ? canonicalTokensList
+          : escrow.tokens.map(getCanonicalTokenBySymbol),
     })),
   }
 }
