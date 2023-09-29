@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2019", "DOM"],
+    "outDir": "build",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}
