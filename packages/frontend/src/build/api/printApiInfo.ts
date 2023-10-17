@@ -2,12 +2,9 @@ import { bridges, layer2s } from '@l2beat/config'
 import {
   ActivityApiResponse,
   DetailedTvlApiResponse,
-  TvlApiResponse,
 } from '@l2beat/shared-pure'
 
-export function printApiInfo(
-  tvlApiResponse: TvlApiResponse | DetailedTvlApiResponse,
-) {
+export function printApiInfo(tvlApiResponse: DetailedTvlApiResponse) {
   console.debug('\n', 'TVL')
   printTvl('combined', tvlApiResponse.combined)
   printTvl('layer2s', tvlApiResponse.layers2s)
@@ -21,10 +18,7 @@ export function printApiInfo(
     }
   }
 
-  function printTvl(
-    label: string,
-    charts: TvlApiResponse['combined'] | DetailedTvlApiResponse['combined'],
-  ) {
+  function printTvl(label: string, charts: DetailedTvlApiResponse['combined']) {
     const tvl = (charts.hourly.data.at(-1)?.[1] ?? 0).toFixed(2)
     const hourly = charts.hourly.data.length.toString()
     const sixHourly = charts.sixHourly.data.length.toString()

@@ -1,10 +1,4 @@
-import {
-  ChainId,
-  DetailedTvlApiProject,
-  DetailedTvlApiToken,
-  TvlApiProject,
-  TvlApiToken,
-} from '@l2beat/shared-pure'
+import { DetailedTvlApiProject, DetailedTvlApiToken } from '@l2beat/shared-pure'
 
 import { getPercentageChange } from '../utils'
 import { getTvlBreakdown } from './getTVLBreakdown'
@@ -12,7 +6,7 @@ import { getTvlBreakdown } from './getTVLBreakdown'
 export type TvlStats = ReturnType<typeof getTvlStats>
 
 export function getTvlStats(
-  tvlProject: TvlApiProject | DetailedTvlApiProject,
+  tvlProject: DetailedTvlApiProject,
   name: string,
   associatedTokens: string[],
 ) {
@@ -40,19 +34,10 @@ export function getTvlStats(
  * @notice Remove once classic TVL API is deprecated
  */
 export function unifyTokensResponse(
-  tokens?: TvlApiToken[] | DetailedTvlApiProject['tokens'],
+  tokens?: DetailedTvlApiProject['tokens'],
 ): DetailedTvlApiToken[] {
   if (!tokens) {
     return []
-  }
-
-  if (Array.isArray(tokens)) {
-    return tokens.map((token) => ({
-      assetId: token.assetId,
-      chainId: ChainId.ETHEREUM,
-      usdValue: token.tvl,
-      assetType: 'CBV',
-    }))
   }
 
   return Object.values(tokens)

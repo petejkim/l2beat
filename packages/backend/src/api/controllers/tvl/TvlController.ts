@@ -11,8 +11,8 @@ import {
   ProjectId,
   ReportType,
   Token,
-  TvlApiChart,
-  TvlApiCharts,
+  TokenTvlApiChart,
+  TokenTvlApiCharts,
   UnixTime,
 } from '@l2beat/shared-pure'
 
@@ -33,7 +33,7 @@ import {
   groupByProjectIdAndAssetType,
   groupByProjectIdAndTimestamp,
 } from './detailedTvl'
-import { generateDetailedTvlApiResponse } from './generateDetailedTvlApiResponse'
+import { generateTvlApiResponse } from './generateTvlApiResponse'
 import { Result } from './types'
 
 interface TvlControllerOptions {
@@ -50,12 +50,12 @@ type TvlResult = Result<
   'DATA_NOT_FULLY_SYNCED' | 'NO_DATA'
 >
 
-type AssetTvlResult = Result<
-  TvlApiCharts,
+type TokenTvlResult = Result<
+  TokenTvlApiCharts,
   'INVALID_PROJECT_OR_ASSET' | 'NO_DATA' | 'DATA_NOT_FULLY_SYNCED'
 >
 
-type TvlProjectResult = Result<
+type AggregatedTvlResult = Result<
   DetailedTvlApiCharts,
   'DATA_NOT_FULLY_SYNCED' | 'NO_DATA' | 'EMPTY_SLUG'
 >
@@ -131,7 +131,7 @@ export class TvlController {
      */
     const groupedLatestReports = groupByProjectIdAndAssetType(latestReports)
 
-    const tvlApiResponse = generateDetailedTvlApiResponse(
+    const tvlApiResponse = generateTvlApiResponse(
       groupedHourlyReports,
       groupedSixHourlyReportsTree,
       groupedDailyReports,
@@ -147,7 +147,7 @@ export class TvlController {
 
   async getAggregatedTvlApiResponse(
     slugs: string[],
-  ): Promise<TvlProjectResult> {
+  ): Promise<AggregatedTvlResult> {
     console.time('[Aggregate endpoint]: setup')
 
     const projectIdsFilter = [...layer2s, ...bridges]
@@ -213,7 +213,7 @@ export class TvlController {
     chainId: ChainId,
     assetId: AssetId,
     assetType: ReportType,
-  ): Promise<AssetTvlResult> {
+  ): Promise<TokenTvlResult> {
     const asset = this.tokens.find((t) => t.id === assetId)
     const project = this.projects.find((p) => p.projectId === projectId)
 
@@ -264,7 +264,7 @@ export class TvlController {
     ])
     const assetSymbol = asset.symbol.toLowerCase()
 
-    const types: TvlApiChart['types'] = ['timestamp', assetSymbol, 'usd']
+    const types: TokenTvlApiChart['types'] = ['timestamp', assetSymbol, 'usd']
 
     return {
       result: 'success',

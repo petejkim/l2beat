@@ -1,6 +1,6 @@
 import {
   DetailedTvlApiChartPoint,
-  TvlApiChartPoint,
+  TokenTvlApiChartPoint,
   UnixTime,
 } from '@l2beat/shared-pure'
 
@@ -19,17 +19,17 @@ interface DetailedBalanceInTime {
   ethNmv: bigint
 }
 
-export function addMissingTimestamps(
-  points: TvlApiChartPoint[],
+export function addTokenMissingTimestamps(
+  points: TokenTvlApiChartPoint[],
   hours: number,
-): TvlApiChartPoint[] {
+): TokenTvlApiChartPoint[] {
   if (points.length === 0) return []
   const [min] = points[0]
   const [max] = points[points.length - 1]
   const timestampValues = new Map(
     points.map(([t, v1, v2]) => [t.toString(), [v1, v2]]),
   )
-  const allPoints: TvlApiChartPoint[] = []
+  const allPoints: TokenTvlApiChartPoint[] = []
   for (
     let timestamp = min;
     timestamp.lte(max);
@@ -46,7 +46,7 @@ export function addMissingTimestamps(
   return allPoints
 }
 
-export function addDetailedMissingTimestamps(
+export function addMissingTimestamps(
   points: DetailedTvlApiChartPoint[],
   hours: number,
 ): DetailedTvlApiChartPoint[] {
@@ -99,13 +99,13 @@ export function getChartPoints(
   hours: number,
   decimals: number,
   usdFirst = false,
-): TvlApiChartPoint[] {
-  const existing: TvlApiChartPoint[] = balances.map((b) => {
+): TokenTvlApiChartPoint[] {
+  const existing: TokenTvlApiChartPoint[] = balances.map((b) => {
     const usd = asNumber(b.usd, 2)
     const asset = asNumber(b.asset, decimals)
     return usdFirst ? [b.timestamp, usd, asset] : [b.timestamp, asset, usd]
   })
-  return addMissingTimestamps(existing, hours)
+  return addTokenMissingTimestamps(existing, hours)
 }
 
 export function covertBalancesToChartPoints(
@@ -157,8 +157,5 @@ export function covertBalancesToChartPoints(
           ]
     })
 
-  return addDetailedMissingTimestamps(
-    existingBalanceChartPoints,
-    resolutionInHours,
-  )
+  return addMissingTimestamps(existingBalanceChartPoints, resolutionInHours)
 }

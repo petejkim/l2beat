@@ -1,79 +1,256 @@
 import {
+  AggregatedReportType,
+  assert,
+  DetailedTvlApiChart,
+  DetailedTvlApiChartPoint,
+  DetailedTvlApiCharts,
+  DetailedTvlApiResponse,
   ProjectId,
-  TvlApiChart,
-  TvlApiChartPoint,
-  TvlApiCharts,
-  TvlApiResponse,
+  UnixTime,
 } from '@l2beat/shared-pure'
+import { sum } from 'lodash'
 
 import { AggregatedReportRecord } from '../../../peripherals/database/AggregatedReportRepository'
-import { ReportRecord } from '../../../peripherals/database/ReportRepository'
-import { asNumber } from './asNumber'
-import { getChartPoints } from './charts'
+import { covertBalancesToChartPoints } from './charts'
+import {
+  getProjectTokensCharts,
+  ReportsPerProjectIdAndAsset,
+  ReportsPerProjectIdAndTimestamp,
+} from './detailedTvl'
+
+export const DETAILED_LABELS: DetailedTvlApiChart['types'] = [
+  'timestamp',
+  'valueUsd',
+  'cbvUsd',
+  'ebvUsd',
+  'nmvUsd',
+  'valueEth',
+  'cbvEth',
+  'ebvEth',
+  'nmvEth',
+]
 
 export function generateTvlApiResponse(
-  hourly: AggregatedReportRecord[],
-  sixHourly: AggregatedReportRecord[],
-  daily: AggregatedReportRecord[],
-  latestReports: ReportRecord[],
+  hourlyReports: ReportsPerProjectIdAndTimestamp,
+  sixHourlyReports: ReportsPerProjectIdAndTimestamp,
+  dailyReports: ReportsPerProjectIdAndTimestamp,
+  latestReports: ReportsPerProjectIdAndAsset,
   projectIds: ProjectId[],
-): TvlApiResponse {
-  const reports = { hourly, sixHourly, daily }
+): DetailedTvlApiResponse {
+  const reports = {
+    hourly: hourlyReports,
+    sixHourly: sixHourlyReports,
+    daily: dailyReports,
+  }
+
+  const layers2s = getProjectDetailedCharts(reports, ProjectId.LAYER2S)
+  const bridges = getProjectDetailedCharts(reports, ProjectId.BRIDGES)
+  const combined = getProjectDetailedCharts(reports, ProjectId.ALL)
+
+  const projects = projectIds.reduce<DetailedTvlApiResponse['projects']>(
+    (acc, projectId) => {
+      acc[projectId.toString()] = {
+        charts: getProjectDetailedCharts(reports, projectId),
+        tokens: getProjectTokensCharts(latestReports, projectId),
+      }
+      return acc
+    },
+    {},
+  )
+
   return {
-    layers2s: getProjectCharts(reports, ProjectId.LAYER2S),
-    bridges: getProjectCharts(reports, ProjectId.BRIDGES),
-    combined: getProjectCharts(reports, ProjectId.ALL),
-    projects: projectIds.reduce<TvlApiResponse['projects']>(
-      (acc, projectId) => {
-        acc[projectId.toString()] = {
-          charts: getProjectCharts(reports, projectId),
-          tokens: latestReports
-            .filter((r) => r.projectId === projectId)
-            .map((r) => ({ assetId: r.asset, tvl: asNumber(r.usdValue, 2) })),
-        }
-        return acc
-      },
-      {},
-    ),
+    layers2s,
+    bridges,
+    combined,
+    projects,
   }
 }
 
-function getProjectCharts(
-  reports: {
-    hourly: AggregatedReportRecord[]
-    sixHourly: AggregatedReportRecord[]
-    daily: AggregatedReportRecord[]
-  },
-  projectId: ProjectId,
-): TvlApiCharts {
-  const types: TvlApiChart['types'] = ['timestamp', 'usd', 'eth']
+export function generateAggregatedTvlApiResponse(
+  hourly: ReportsPerProjectIdAndTimestamp,
+  sixHourly: ReportsPerProjectIdAndTimestamp,
+  daily: ReportsPerProjectIdAndTimestamp,
+  projectIds: ProjectId[],
+): DetailedTvlApiCharts {
+  const result: DetailedTvlApiCharts = createEmptyDetailedTvlApiCharts()
+
+  // get project detailed charts of filtered projects (projectIds)
+
+  const projectDetailedCharts = projectIds.map((projectId) => {
+    return getProjectDetailedCharts(
+      {
+        hourly,
+        sixHourly,
+        daily,
+      },
+      projectId,
+    )
+  })
+
+  // aggregate detailed charts
+
+  const hourlyDataLength = projectDetailedCharts[0].hourly.data.length
+  assert(
+    projectDetailedCharts.every(
+      (chart) => chart.hourly.data.length === hourlyDataLength,
+    ),
+    'hourly data length mismatch',
+  )
+  result.hourly.data = [...Array(hourlyDataLength).keys()].map((i) =>
+    mergeDetailValues(
+      projectDetailedCharts.map((projectChart) => projectChart.hourly.data[i]),
+    ),
+  )
+
+  const sixHourlyDataLength = projectDetailedCharts[0].sixHourly.data.length
+  assert(
+    projectDetailedCharts.every(
+      (chart) => chart.sixHourly.data.length === sixHourlyDataLength,
+    ),
+    'sixHourly data length mismatch',
+  )
+  result.sixHourly.data = [...Array(sixHourlyDataLength).keys()].map((i) =>
+    mergeDetailValues(
+      projectDetailedCharts.map(
+        (projectChart) => projectChart.sixHourly.data[i],
+      ),
+    ),
+  )
+
+  const dailyDataLength = projectDetailedCharts[0].daily.data.length
+  assert(
+    projectDetailedCharts.every(
+      (chart) => chart.daily.data.length === dailyDataLength,
+    ),
+    'daily data length mismatch',
+  )
+  result.daily.data = [...Array(dailyDataLength).keys()].map((i) =>
+    mergeDetailValues(
+      projectDetailedCharts.map((projectChart) => projectChart.daily.data[i]),
+    ),
+  )
+
+  return result
+}
+
+function createEmptyDetailedTvlApiCharts(): DetailedTvlApiCharts {
   return {
     hourly: {
-      types,
-      data: getProjectChartData(reports.hourly, projectId, 1),
+      types: DETAILED_LABELS,
+      data: [],
     },
     sixHourly: {
-      types,
-      data: getProjectChartData(reports.sixHourly, projectId, 6),
+      types: DETAILED_LABELS,
+      data: [],
+    },
+    daily: { types: DETAILED_LABELS, data: [] },
+  }
+}
+
+function mergeDetailValues(
+  values: DetailedTvlApiChartPoint[],
+): DetailedTvlApiChartPoint {
+  return [
+    values[0][0],
+    sum(values.map((value) => value[1])),
+    sum(values.map((value) => value[2])),
+    sum(values.map((value) => value[3])),
+    sum(values.map((value) => value[4])),
+    sum(values.map((value) => value[5])),
+    sum(values.map((value) => value[6])),
+    sum(values.map((value) => value[7])),
+    sum(values.map((value) => value[8])),
+  ]
+}
+
+export function getProjectDetailedCharts(
+  reports: {
+    hourly: ReportsPerProjectIdAndTimestamp
+    sixHourly: ReportsPerProjectIdAndTimestamp
+    daily: ReportsPerProjectIdAndTimestamp
+  },
+  projectId: ProjectId,
+): DetailedTvlApiCharts {
+  return {
+    hourly: {
+      types: DETAILED_LABELS,
+      data: getProjectDetailedChartData(reports.hourly, projectId, 1),
+    },
+    sixHourly: {
+      types: DETAILED_LABELS,
+      data: getProjectDetailedChartData(reports.sixHourly, projectId, 6),
     },
     daily: {
-      types: types,
-      data: getProjectChartData(reports.daily, projectId, 24),
+      types: DETAILED_LABELS,
+      data: getProjectDetailedChartData(reports.daily, projectId, 24),
     },
   }
 }
 
-function getProjectChartData(
-  reports: AggregatedReportRecord[],
+export function getProjectDetailedChartData(
+  reportTree: ReportsPerProjectIdAndTimestamp,
   projectId: ProjectId,
-  hours: number,
-): TvlApiChartPoint[] {
-  const balances = reports
-    .filter((r) => r.projectId === projectId)
-    .map((r) => ({
-      timestamp: r.timestamp,
-      usd: r.usdValue,
-      asset: r.ethValue,
-    }))
-  return getChartPoints(balances, hours, 6, true)
+  resolutionInHours: number,
+): DetailedTvlApiChartPoint[] {
+  const projectReportsByTimestamp = reportTree[projectId.toString()]
+
+  // Project may be missing reports
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!projectReportsByTimestamp) {
+    return []
+  }
+
+  const balancesInTime = Object.entries(projectReportsByTimestamp).map(
+    ([timestamp, valueReports]) => {
+      const { tvlReport, cbvReport, ebvReport, nmvReport } =
+        extractReportTypeSet(valueReports)
+
+      return {
+        timestamp: new UnixTime(Number(timestamp)),
+        usdTvl: tvlReport.usdValue,
+        ethTvl: tvlReport.ethValue,
+        usdCbv: cbvReport.usdValue,
+        ethCbv: cbvReport.ethValue,
+        usdEbv: ebvReport.usdValue,
+        ethEbv: ebvReport.ethValue,
+        usdNmv: nmvReport.usdValue,
+        ethNmv: nmvReport.ethValue,
+      }
+    },
+  )
+
+  return covertBalancesToChartPoints(balancesInTime, resolutionInHours, 6, true)
+}
+
+export function extractReportTypeSet(reports: AggregatedReportRecord[]) {
+  const typesToSeek: AggregatedReportType[] = ['TVL', 'CBV', 'EBV', 'NMV']
+
+  const defaultValue = {
+    usdValue: 0n,
+    ethValue: 0n,
+  }
+
+  const fillMissingReportValues = getReportValuesOr(defaultValue)
+
+  const [tvlReport, cbvReport, ebvReport, nmvReport] = typesToSeek
+    .map((requestedReportType) =>
+      reports.find(({ reportType }) => reportType === requestedReportType),
+    )
+    .map(fillMissingReportValues)
+
+  return {
+    tvlReport,
+    cbvReport,
+    ebvReport,
+    nmvReport,
+  }
+}
+
+function getReportValuesOr(fallback: { usdValue: bigint; ethValue: bigint }) {
+  return function (report?: AggregatedReportRecord) {
+    return {
+      usdValue: report?.usdValue ?? fallback.usdValue,
+      ethValue: report?.ethValue ?? fallback.ethValue,
+    }
+  }
 }
