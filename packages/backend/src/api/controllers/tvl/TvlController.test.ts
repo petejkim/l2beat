@@ -131,7 +131,7 @@ describe(TvlController.name, () => {
         Logger.SILENT,
         latestConfigHash,
         {
-          errorOnUnsyncedDetailedTvl: false,
+          errorOnUnsyncedTvl: false,
         },
       )
 
@@ -159,7 +159,7 @@ describe(TvlController.name, () => {
    * TODO: Add test for granular/exact matches of produces chart points
    */
   describe(TvlController.prototype.getAssetTvlApiResponse.name, () => {
-    it('produces detailed asset`s balances in time for charts', async () => {
+    it('produces asset`s balances in time for charts', async () => {
       const latestConfigHash = Hash256.random()
 
       const projectId = ProjectId('arbitrum')
@@ -170,9 +170,9 @@ describe(TvlController.name, () => {
       const fakeReports = fakeReportSeries(projectId, chainId, asset, type)
 
       const reportRepository = mockObject<ReportRepository>({
-        getHourlyForDetailed: async () => fakeReports.hourlyReports,
-        getSixHourlyForDetailed: async () => fakeReports.sixHourlyReports,
-        getDailyForDetailed: async () => fakeReports.dailyReports,
+        getHourly: async () => fakeReports.hourlyReports,
+        getSixHourly: async () => fakeReports.sixHourlyReports,
+        getDaily: async () => fakeReports.dailyReports,
       })
 
       const aggregatedReportStatusRepository =
@@ -197,7 +197,7 @@ describe(TvlController.name, () => {
         Logger.SILENT,
         latestConfigHash,
         {
-          errorOnUnsyncedDetailedTvl: false,
+          errorOnUnsyncedTvl: false,
         },
       )
 
@@ -237,7 +237,7 @@ describe(TvlController.name, () => {
         ),
       })
 
-      expect(reportRepository.getHourlyForDetailed).toHaveBeenCalledWith(
+      expect(reportRepository.getHourly).toHaveBeenCalledWith(
         projectId,
         chainId,
         asset,
@@ -245,7 +245,7 @@ describe(TvlController.name, () => {
         fakeReports.to.add(-7, 'days'),
       )
 
-      expect(reportRepository.getSixHourlyForDetailed).toHaveBeenCalledWith(
+      expect(reportRepository.getSixHourly).toHaveBeenCalledWith(
         projectId,
         chainId,
         asset,
@@ -253,7 +253,7 @@ describe(TvlController.name, () => {
         fakeReports.to.add(-90, 'days'),
       )
 
-      expect(reportRepository.getDailyForDetailed).toHaveBeenCalledWith(
+      expect(reportRepository.getDaily).toHaveBeenCalledWith(
         projectId,
         chainId,
         asset,
@@ -426,7 +426,7 @@ describe(TvlController.name, () => {
           Logger.SILENT,
           latestConfigHash,
           {
-            errorOnUnsyncedDetailedTvl: false,
+            errorOnUnsyncedTvl: false,
           },
         )
 

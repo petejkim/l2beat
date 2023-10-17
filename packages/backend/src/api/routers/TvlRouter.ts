@@ -15,21 +15,21 @@ export function createTvlRouter(tvlController: TvlController) {
   const router = new Router()
 
   router.get('/api/tvl', async (ctx) => {
-    const detailedTvlResult = await tvlController.getTvlApiResponse()
+    const tvlResult = await tvlController.getTvlApiResponse()
 
-    if (detailedTvlResult.result === 'error') {
-      if (detailedTvlResult.error === 'DATA_NOT_FULLY_SYNCED') {
+    if (tvlResult.result === 'error') {
+      if (tvlResult.error === 'DATA_NOT_FULLY_SYNCED') {
         ctx.status = 422
       }
 
-      if (detailedTvlResult.error === 'NO_DATA') {
+      if (tvlResult.error === 'NO_DATA') {
         ctx.status = 404
       }
 
       return
     }
 
-    ctx.body = detailedTvlResult.data
+    ctx.body = tvlResult.data
   })
 
   router.get(

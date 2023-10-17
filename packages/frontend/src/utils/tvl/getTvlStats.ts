@@ -1,4 +1,4 @@
-import { DetailedTvlApiProject, DetailedTvlApiToken } from '@l2beat/shared-pure'
+import { TvlApiProject, TvlApiToken } from '@l2beat/shared-pure'
 
 import { getPercentageChange } from '../utils'
 import { getTvlBreakdown } from './getTVLBreakdown'
@@ -6,7 +6,7 @@ import { getTvlBreakdown } from './getTVLBreakdown'
 export type TvlStats = ReturnType<typeof getTvlStats>
 
 export function getTvlStats(
-  tvlProject: DetailedTvlApiProject,
+  tvlProject: TvlApiProject,
   name: string,
   associatedTokens: string[],
 ) {
@@ -34,8 +34,8 @@ export function getTvlStats(
  * @notice Remove once classic TVL API is deprecated
  */
 export function unifyTokensResponse(
-  tokens?: DetailedTvlApiProject['tokens'],
-): DetailedTvlApiToken[] {
+  tokens?: TvlApiProject['tokens'],
+): TvlApiToken[] {
   if (!tokens) {
     return []
   }

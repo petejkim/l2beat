@@ -1,10 +1,10 @@
 import {
   AssetId,
   ChainId,
-  DetailedTvlApiChart,
-  DetailedTvlApiChartPoint,
-  DetailedTvlApiCharts,
   ProjectId,
+  TvlApiChart,
+  TvlApiChartPoint,
+  TvlApiCharts,
   UnixTime,
 } from '@l2beat/shared-pure'
 import { expect } from 'earl'
@@ -12,17 +12,17 @@ import { expect } from 'earl'
 import { AggregatedReportRecord } from '../../../peripherals/database/AggregatedReportRepository'
 import { ReportRecord } from '../../../peripherals/database/ReportRepository'
 import {
-  getProjectTokensCharts,
-  groupByProjectIdAndAssetType,
-  groupByProjectIdAndTimestamp,
-} from './detailedTvl'
-import {
-  DETAILED_LABELS,
   extractReportTypeSet,
   generateAggregatedTvlApiResponse,
   generateTvlApiResponse,
-  getProjectDetailedChartData,
+  getProjectChartData,
+  TYPE_LABELS,
 } from './generateTvlApiResponse'
+import {
+  getProjectTokensCharts,
+  groupByProjectIdAndAssetType,
+  groupByProjectIdAndTimestamp,
+} from './tvl'
 
 describe(generateTvlApiResponse.name, () => {
   it('returns the correct groupings', () => {
@@ -68,8 +68,8 @@ describe(generateTvlApiResponse.name, () => {
   function charts(
     reports: ReturnType<typeof fakeReports>,
     projectId: ProjectId,
-  ): DetailedTvlApiCharts {
-    const types: DetailedTvlApiChart['types'] = [
+  ): TvlApiCharts {
+    const types: TvlApiChart['types'] = [
       'timestamp',
       'valueUsd',
       'cbvUsd',
@@ -84,15 +84,15 @@ describe(generateTvlApiResponse.name, () => {
     return {
       hourly: {
         types,
-        data: getProjectDetailedChartData(reports.hourly, projectId, 1),
+        data: getProjectChartData(reports.hourly, projectId, 1),
       },
       sixHourly: {
         types,
-        data: getProjectDetailedChartData(reports.sixHourly, projectId, 6),
+        data: getProjectChartData(reports.sixHourly, projectId, 6),
       },
       daily: {
         types,
-        data: getProjectDetailedChartData(reports.daily, projectId, 24),
+        data: getProjectChartData(reports.daily, projectId, 24),
       },
     }
   }
@@ -322,16 +322,16 @@ describe(generateAggregatedTvlApiResponse.name, () => {
     ])
 
     const setPointTimeMapper = (interval: number) => {
-      return (point: DetailedTvlApiChartPoint, i: number) => {
+      return (point: TvlApiChartPoint, i: number) => {
         return [
           new UnixTime(i * interval),
           ...point.slice(1),
-        ] as DetailedTvlApiChartPoint
+        ] as TvlApiChartPoint
       }
     }
-    const expectedResult: DetailedTvlApiCharts = {
+    const expectedResult: TvlApiCharts = {
       hourly: {
-        types: DETAILED_LABELS,
+        types: TYPE_LABELS,
         data: [
           ...new Array(6).fill(zeroTime),
           ...new Array(18).fill(sixHour),
@@ -339,13 +339,13 @@ describe(generateAggregatedTvlApiResponse.name, () => {
         ].map(setPointTimeMapper(UnixTime.HOUR)),
       },
       sixHourly: {
-        types: DETAILED_LABELS,
+        types: TYPE_LABELS,
         data: [zeroTime, sixHour, sixHour, sixHour, oneDay].map(
           setPointTimeMapper(UnixTime.SIX_HOURS),
         ),
       },
       daily: {
-        types: DETAILED_LABELS,
+        types: TYPE_LABELS,
         data: [zeroTime, oneDay].map(setPointTimeMapper(UnixTime.DAY)),
       },
     }
@@ -353,7 +353,7 @@ describe(generateAggregatedTvlApiResponse.name, () => {
     expect(result).toEqual(expectedResult)
   })
 
-  function getData(tvls: number[]): DetailedTvlApiChartPoint[] {
+  function getData(tvls: number[]): TvlApiChartPoint[] {
     return tvls.map((tvl, i) => {
       return [
         new UnixTime(timestamps[i]),

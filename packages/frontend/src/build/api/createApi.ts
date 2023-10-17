@@ -1,8 +1,8 @@
 import {
   ActivityApiCharts,
   ActivityApiResponse,
-  DetailedTvlApiCharts,
-  DetailedTvlApiResponse,
+  TvlApiCharts,
+  TvlApiResponse,
 } from '@l2beat/shared-pure'
 import fsx from 'fs-extra'
 import path from 'path'
@@ -11,10 +11,10 @@ import { Config } from '../config'
 
 export function createApi(
   config: Config,
-  tvlApiResponse: DetailedTvlApiResponse,
+  tvlApiResponse: TvlApiResponse,
   activityApiResponse: ActivityApiResponse | undefined,
 ) {
-  const urlCharts = new Map<string, DetailedTvlApiCharts | ActivityApiCharts>()
+  const urlCharts = new Map<string, TvlApiCharts | ActivityApiCharts>()
 
   urlCharts.set('tvl/scaling', tvlApiResponse.layers2s)
   urlCharts.set('tvl/bridges', tvlApiResponse.bridges)
@@ -45,7 +45,7 @@ export function createApi(
 }
 
 export function outputCharts(
-  urlCharts: Map<string, DetailedTvlApiCharts | ActivityApiCharts>,
+  urlCharts: Map<string, TvlApiCharts | ActivityApiCharts>,
 ) {
   for (const [url, charts] of urlCharts) {
     const json = JSON.stringify(charts)

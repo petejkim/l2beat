@@ -23,7 +23,7 @@ export interface ProjectHeaderProps {
   titleLength?: 'long' | 'very-long'
   titleClassName?: string
   icon?: string
-  tvlStats?: TvlStats
+  tvlStats: TvlStats
   tpsDaily?: string
   tpsWeeklyChange?: string
   transactionMonthlyCount?: string
@@ -103,22 +103,20 @@ export function ProjectHeader(props: ProjectHeaderProps) {
     },
   ]
 
-  if (props.tvlStats) {
-    summary.unshift({
-      title: 'Total value locked',
-      tooltip:
-        'Total value locked in escrow contracts on Ethereum displayed together with a percentage change compared to 7D ago.',
-      value: !props.isUpcoming ? (
-        <StatWithChange
-          className="font-bold"
-          stat={formatUSD(props.tvlStats.tvl)}
-          change={props.tvlStats.tvlChange}
-        />
-      ) : (
-        <UpcomingBadge />
-      ),
-    })
-  }
+  summary.unshift({
+    title: 'Total value locked',
+    tooltip:
+      'Total value locked in escrow contracts on Ethereum displayed together with a percentage change compared to 7D ago.',
+    value: !props.isUpcoming ? (
+      <StatWithChange
+        className="font-bold"
+        stat={formatUSD(props.tvlStats.tvl)}
+        change={props.tvlStats.tvlChange}
+      />
+    ) : (
+      <UpcomingBadge />
+    ),
+  })
 
   return (
     <DetailsHeader

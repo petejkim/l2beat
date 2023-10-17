@@ -3,9 +3,6 @@ import { bridges, layer2s } from '@l2beat/config'
 import {
   AssetId,
   ChainId,
-  DetailedTvlApiChart,
-  DetailedTvlApiCharts,
-  DetailedTvlApiResponse,
   Hash256,
   ProjectAssetsBreakdownApiResponse,
   ProjectId,
@@ -13,6 +10,9 @@ import {
   Token,
   TokenTvlApiChart,
   TokenTvlApiCharts,
+  TvlApiChart,
+  TvlApiCharts,
+  TvlApiResponse,
   UnixTime,
 } from '@l2beat/shared-pure'
 
@@ -26,18 +26,18 @@ import { getHourlyMinTimestamp } from '../utils/getHourlyMinTimestamp'
 import { getSixHourlyMinTimestamp } from '../utils/getSixHourlyMinTimestamp'
 import { asNumber } from './asNumber'
 import { getProjectAssetChartData } from './charts'
+import { generateTvlApiResponse } from './generateTvlApiResponse'
 import {
   getCanonicalAssetsBreakdown,
   getNonCanonicalAssetsBreakdown,
   groupAndMergeBreakdowns,
   groupByProjectIdAndAssetType,
   groupByProjectIdAndTimestamp,
-} from './detailedTvl'
-import { generateTvlApiResponse } from './generateTvlApiResponse'
+} from './tvl'
 import { Result } from './types'
 
 interface TvlControllerOptions {
-  errorOnUnsyncedDetailedTvl: boolean
+  errorOnUnsyncedTvl: boolean
 }
 
 type ProjectAssetBreakdownResult = Result<
@@ -45,10 +45,7 @@ type ProjectAssetBreakdownResult = Result<
   'DATA_NOT_FULLY_SYNCED' | 'NO_DATA'
 >
 
-type TvlResult = Result<
-  DetailedTvlApiResponse,
-  'DATA_NOT_FULLY_SYNCED' | 'NO_DATA'
->
+type TvlResult = Result<TvlApiResponse, 'DATA_NOT_FULLY_SYNCED' | 'NO_DATA'>
 
 type TokenTvlResult = Result<
   TokenTvlApiCharts,
@@ -56,7 +53,7 @@ type TokenTvlResult = Result<
 >
 
 type AggregatedTvlResult = Result<
-  DetailedTvlApiCharts,
+  TvlApiCharts,
   'DATA_NOT_FULLY_SYNCED' | 'NO_DATA' | 'EMPTY_SLUG'
 >
 
@@ -89,7 +86,7 @@ export class TvlController {
       }
     }
 
-    if (!dataTimings.isSynced && this.options.errorOnUnsyncedDetailedTvl) {
+    if (!dataTimings.isSynced && this.options.errorOnUnsyncedTvl) {
       return {
         result: 'error',
         error: 'DATA_NOT_FULLY_SYNCED',
@@ -170,7 +167,7 @@ export class TvlController {
       }
     }
 
-    if (!dataTimings.isSynced && this.options.errorOnUnsyncedDetailedTvl) {
+    if (!dataTimings.isSynced && this.options.errorOnUnsyncedTvl) {
       return {
         result: 'error',
         error: 'DATA_NOT_FULLY_SYNCED',
@@ -194,7 +191,7 @@ export class TvlController {
 
     console.time('[Aggregate endpoint]: aggregation')
 
-    const data: DetailedTvlApiCharts = {
+    const data: TvlApiCharts = {
       hourly: aggregateRecordsToResponse(hourlyReports),
       sixHourly: aggregateRecordsToResponse(sixHourlyReports),
       daily: aggregateRecordsToResponse(dailyReports),
@@ -233,7 +230,7 @@ export class TvlController {
       }
     }
 
-    if (!dataTimings.isSynced && this.options.errorOnUnsyncedDetailedTvl) {
+    if (!dataTimings.isSynced && this.options.errorOnUnsyncedTvl) {
       return {
         result: 'error',
         error: 'DATA_NOT_FULLY_SYNCED',
@@ -241,26 +238,21 @@ export class TvlController {
     }
 
     const [hourlyReports, sixHourlyReports, dailyReports] = await Promise.all([
-      this.reportRepository.getHourlyForDetailed(
+      this.reportRepository.getHourly(
         projectId,
         chainId,
         assetId,
         assetType,
         getHourlyMinTimestamp(dataTimings.latestTimestamp),
       ),
-      this.reportRepository.getSixHourlyForDetailed(
+      this.reportRepository.getSixHourly(
         projectId,
         chainId,
         assetId,
         assetType,
         getSixHourlyMinTimestamp(dataTimings.latestTimestamp),
       ),
-      this.reportRepository.getDailyForDetailed(
-        projectId,
-        chainId,
-        assetId,
-        assetType,
-      ),
+      this.reportRepository.getDaily(projectId, chainId, assetId, assetType),
     ])
     const assetSymbol = asset.symbol.toLowerCase()
 
@@ -295,7 +287,7 @@ export class TvlController {
       }
     }
 
-    if (!dataTimings.isSynced && this.options.errorOnUnsyncedDetailedTvl) {
+    if (!dataTimings.isSynced && this.options.errorOnUnsyncedTvl) {
       return {
         result: 'error',
         error: 'DATA_NOT_FULLY_SYNCED',
@@ -363,7 +355,7 @@ export class TvlController {
   }
 }
 
-export const DETAILED_LABELS: DetailedTvlApiChart['types'] = [
+export const TYPE_LABELS: TvlApiChart['types'] = [
   'timestamp',
   'valueUsd',
   'cbvUsd',
@@ -387,9 +379,9 @@ function aggregateRecordsToResponse(
     tvlUsdValue: bigint
     tvlEthValue: bigint
   }[],
-): DetailedTvlApiChart {
+): TvlApiChart {
   return {
-    types: DETAILED_LABELS,
+    types: TYPE_LABELS,
     data: hourlyReports.map((report) => [
       report.timestamp,
       asNumber(report.tvlUsdValue, 2),

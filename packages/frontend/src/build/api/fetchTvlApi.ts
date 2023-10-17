@@ -3,29 +3,29 @@ import {
   AssetId,
   AssetType,
   ChainId,
-  DetailedTvlApiChart,
-  DetailedTvlApiCharts,
-  DetailedTvlApiResponse,
+  TvlApiChart,
+  TvlApiCharts,
+  TvlApiResponse,
   UnixTime,
 } from '@l2beat/shared-pure'
 
 import { JsonHttpClient } from '../caching/JsonHttpClient'
 import { Config } from '../config'
 
-export async function fetchDetailedTvlApi(
+export async function fetchTvlApi(
   backend: Config['backend'],
   http: JsonHttpClient,
-): Promise<DetailedTvlApiResponse> {
+): Promise<TvlApiResponse> {
   if (backend.mock) {
-    return getMockDetailedTvlApiResponse()
+    return getMockTvlApiResponse()
   }
   const url = `${backend.apiUrl}/api/detailed-tvl`
   const json = await http.fetchJson(url)
-  return DetailedTvlApiResponse.parse(json)
+  return TvlApiResponse.parse(json)
 }
 
-function getMockDetailedTvlApiResponse(): DetailedTvlApiResponse {
-  const result: DetailedTvlApiResponse = {
+function getMockTvlApiResponse(): TvlApiResponse {
+  const result: TvlApiResponse = {
     bridges: getMockDetailedTvlApiCharts(),
     layers2s: getMockDetailedTvlApiCharts(),
     combined: getMockDetailedTvlApiCharts(),
@@ -82,7 +82,7 @@ function getMockDetailedTvlApiResponse(): DetailedTvlApiResponse {
   return result
 }
 
-const DETAILED_LABELS: DetailedTvlApiChart['types'] = [
+const DETAILED_LABELS: TvlApiChart['types'] = [
   'timestamp',
   'valueUsd',
   'cbvUsd',
@@ -96,9 +96,9 @@ const DETAILED_LABELS: DetailedTvlApiChart['types'] = [
 
 const MOCK_VALUES = [60, 30, 20, 10, 5, 3, 2, 1] as const
 
-function getMockDetailedTvlApiCharts(): DetailedTvlApiCharts {
+function getMockDetailedTvlApiCharts(): TvlApiCharts {
   let now = UnixTime.now().toStartOf('hour')
-  const charts: DetailedTvlApiCharts = {
+  const charts: TvlApiCharts = {
     hourly: {
       types: DETAILED_LABELS,
       data: [],

@@ -7,7 +7,7 @@ import { ChainId } from '../ChainId'
 import { EthereumAddress } from '../EthereumAddress'
 import { UnixTime } from '../UnixTime'
 
-const DetailedTvlApiChartPoint = z.tuple([
+const TvlApiChartPoint = z.tuple([
   branded(z.number(), (n) => new UnixTime(n)),
   z.number(),
   z.number(),
@@ -18,9 +18,9 @@ const DetailedTvlApiChartPoint = z.tuple([
   z.number(),
   z.number(),
 ])
-export type DetailedTvlApiChartPoint = z.infer<typeof DetailedTvlApiChartPoint>
+export type TvlApiChartPoint = z.infer<typeof TvlApiChartPoint>
 
-const DetailedTvlApiChart = z.object({
+const TvlApiChart = z.object({
   types: z.tuple([
     z.literal('timestamp'),
     z.literal('valueUsd'),
@@ -32,43 +32,43 @@ const DetailedTvlApiChart = z.object({
     z.literal('ebvEth'),
     z.literal('nmvEth'),
   ]),
-  data: z.array(DetailedTvlApiChartPoint),
+  data: z.array(TvlApiChartPoint),
 })
-export type DetailedTvlApiChart = z.infer<typeof DetailedTvlApiChart>
+export type TvlApiChart = z.infer<typeof TvlApiChart>
 
-export const DetailedTvlApiCharts = z.object({
-  hourly: DetailedTvlApiChart,
-  sixHourly: DetailedTvlApiChart,
-  daily: DetailedTvlApiChart,
+export const TvlApiCharts = z.object({
+  hourly: TvlApiChart,
+  sixHourly: TvlApiChart,
+  daily: TvlApiChart,
 })
-export type DetailedTvlApiCharts = z.infer<typeof DetailedTvlApiCharts>
+export type TvlApiCharts = z.infer<typeof TvlApiCharts>
 
-export const DetailedTvlApiToken = z.object({
+export const TvlApiToken = z.object({
   assetId: branded(z.string(), AssetId),
   chainId: branded(z.number(), ChainId),
   assetType: branded(z.string(), AssetType),
   usdValue: z.number(),
 })
 
-export type DetailedTvlApiToken = z.infer<typeof DetailedTvlApiToken>
+export type TvlApiToken = z.infer<typeof TvlApiToken>
 
-export const DetailedTvlApiProject = z.object({
+export const TvlApiProject = z.object({
   tokens: z.object({
-    CBV: z.array(DetailedTvlApiToken),
-    EBV: z.array(DetailedTvlApiToken),
-    NMV: z.array(DetailedTvlApiToken),
+    CBV: z.array(TvlApiToken),
+    EBV: z.array(TvlApiToken),
+    NMV: z.array(TvlApiToken),
   }),
-  charts: DetailedTvlApiCharts,
+  charts: TvlApiCharts,
 })
-export type DetailedTvlApiProject = z.infer<typeof DetailedTvlApiProject>
+export type TvlApiProject = z.infer<typeof TvlApiProject>
 
-export const DetailedTvlApiResponse = z.object({
-  bridges: DetailedTvlApiCharts,
-  layers2s: DetailedTvlApiCharts,
-  combined: DetailedTvlApiCharts,
-  projects: z.record(z.string(), DetailedTvlApiProject.optional()),
+export const TvlApiResponse = z.object({
+  bridges: TvlApiCharts,
+  layers2s: TvlApiCharts,
+  combined: TvlApiCharts,
+  projects: z.record(z.string(), TvlApiProject.optional()),
 })
-export type DetailedTvlApiResponse = z.infer<typeof DetailedTvlApiResponse>
+export type TvlApiResponse = z.infer<typeof TvlApiResponse>
 
 const BaseAssetBreakdownData = z.object({
   assetId: branded(z.string(), AssetId),
