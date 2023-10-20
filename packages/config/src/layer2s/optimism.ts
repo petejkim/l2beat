@@ -502,5 +502,10 @@ export const optimism: Layer2 = {
       url: 'https://www.optimism.io/vision',
       thumbnail: NUGGETS.THUMBNAILS.OPTIMISM_VISION,
     },
+    {
+      title: 'The Optimistic Vision - 2',
+      url: 'https://www.optimism.io/vision',
+      thumbnail: NUGGETS.THUMBNAILS.OPTIMISM_VISION_2,
+    },
   ],
 }
